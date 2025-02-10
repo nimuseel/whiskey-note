@@ -1,10 +1,3 @@
-//
-//  ContentView.swift
-//  whiskey note
-//
-//  Created by 이수민 on 2/10/25.
-//
-
 import SwiftUI
 import SwiftData
 
