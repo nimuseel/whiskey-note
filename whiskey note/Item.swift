@@ -1,18 +1,15 @@
-//
-//  Item.swift
-//  whiskey note
-//
-//  Created by 이수민 on 2/10/25.
-//
-
 import Foundation
 import SwiftData
 
 @Model
 final class Item {
-    var timestamp: Date
+    @Attribute(.unique)
+    var id: UUID = UUID()
+    var whiskey: Whiskey
+    var createdAt: Date
     
-    init(timestamp: Date) {
-        self.timestamp = timestamp
+    init(whiskey: Whiskey, createdAt: Date) {
+        self.whiskey = whiskey
+        self.createdAt = createdAt
     }
 }
