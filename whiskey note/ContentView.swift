@@ -26,7 +26,7 @@ struct ContentView: View {
                 }
             }
             .navigationDestination(isPresented: $isCreatePagePresent, destination: {
-                Text("123")
+                CreateView()
             })
         }
     }
