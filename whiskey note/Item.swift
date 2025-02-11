@@ -5,11 +5,14 @@ import SwiftData
 final class Item {
     @Attribute(.unique)
     var id: UUID = UUID()
-    var whiskey: Whiskey
+//    var whiskey: Whiskey
     var createdAt: Date
     
-    init(whiskey: Whiskey, createdAt: Date) {
-        self.whiskey = whiskey
+//    init(whiskey: Whiskey, createdAt: Date) {
+//        self.whiskey = whiskey
+//        self.createdAt = createdAt
+//    }
+    init(createdAt: Date) {
         self.createdAt = createdAt
     }
 }
