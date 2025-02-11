@@ -24,9 +24,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		742E36372D59D4AE001B11E1 /* whiskey note.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "whiskey note.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		742E36492D59D4B0001B11E1 /* whiskey noteTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "whiskey noteTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		742E36532D59D4B0001B11E1 /* whiskey noteUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "whiskey noteUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		742E36372D59D4AE001B11E1 /* whiskey-note.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "whiskey-note.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		742E36492D59D4B0001B11E1 /* whiskey-noteTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "whiskey-noteTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		742E36532D59D4B0001B11E1 /* whiskey-noteUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "whiskey-noteUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -85,9 +85,9 @@
 		742E36382D59D4AE001B11E1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				742E36372D59D4AE001B11E1 /* whiskey note.app */,
-				742E36492D59D4B0001B11E1 /* whiskey noteTests.xctest */,
-				742E36532D59D4B0001B11E1 /* whiskey noteUITests.xctest */,
+				742E36372D59D4AE001B11E1 /* whiskey-note.app */,
+				742E36492D59D4B0001B11E1 /* whiskey-noteTests.xctest */,
+				742E36532D59D4B0001B11E1 /* whiskey-noteUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		742E36362D59D4AE001B11E1 /* whiskey note */ = {
+		742E36362D59D4AE001B11E1 /* whiskey-note */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 742E365D2D59D4B0001B11E1 /* Build configuration list for PBXNativeTarget "whiskey note" */;
+			buildConfigurationList = 742E365D2D59D4B0001B11E1 /* Build configuration list for PBXNativeTarget "whiskey-note" */;
 			buildPhases = (
 				742E36332D59D4AE001B11E1 /* Sources */,
 				742E36342D59D4AE001B11E1 /* Frameworks */,
@@ -110,16 +110,16 @@
 			fileSystemSynchronizedGroups = (
 				742E36392D59D4AE001B11E1 /* whiskey note */,
 			);
-			name = "whiskey note";
+			name = "whiskey-note";
 			packageProductDependencies = (
 			);
 			productName = "whiskey note";
-			productReference = 742E36372D59D4AE001B11E1 /* whiskey note.app */;
+			productReference = 742E36372D59D4AE001B11E1 /* whiskey-note.app */;
 			productType = "com.apple.product-type.application";
 		};
-		742E36482D59D4B0001B11E1 /* whiskey noteTests */ = {
+		742E36482D59D4B0001B11E1 /* whiskey-noteTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 742E36602D59D4B0001B11E1 /* Build configuration list for PBXNativeTarget "whiskey noteTests" */;
+			buildConfigurationList = 742E36602D59D4B0001B11E1 /* Build configuration list for PBXNativeTarget "whiskey-noteTests" */;
 			buildPhases = (
 				742E36452D59D4B0001B11E1 /* Sources */,
 				742E36462D59D4B0001B11E1 /* Frameworks */,
@@ -133,16 +133,16 @@
 			fileSystemSynchronizedGroups = (
 				742E364C2D59D4B0001B11E1 /* whiskey noteTests */,
 			);
-			name = "whiskey noteTests";
+			name = "whiskey-noteTests";
 			packageProductDependencies = (
 			);
 			productName = "whiskey noteTests";
-			productReference = 742E36492D59D4B0001B11E1 /* whiskey noteTests.xctest */;
+			productReference = 742E36492D59D4B0001B11E1 /* whiskey-noteTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		742E36522D59D4B0001B11E1 /* whiskey noteUITests */ = {
+		742E36522D59D4B0001B11E1 /* whiskey-noteUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 742E36632D59D4B0001B11E1 /* Build configuration list for PBXNativeTarget "whiskey noteUITests" */;
+			buildConfigurationList = 742E36632D59D4B0001B11E1 /* Build configuration list for PBXNativeTarget "whiskey-noteUITests" */;
 			buildPhases = (
 				742E364F2D59D4B0001B11E1 /* Sources */,
 				742E36502D59D4B0001B11E1 /* Frameworks */,
@@ -156,11 +156,11 @@
 			fileSystemSynchronizedGroups = (
 				742E36562D59D4B0001B11E1 /* whiskey noteUITests */,
 			);
-			name = "whiskey noteUITests";
+			name = "whiskey-noteUITests";
 			packageProductDependencies = (
 			);
 			productName = "whiskey noteUITests";
-			productReference = 742E36532D59D4B0001B11E1 /* whiskey noteUITests.xctest */;
+			productReference = 742E36532D59D4B0001B11E1 /* whiskey-noteUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +186,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 742E36322D59D4AE001B11E1 /* Build configuration list for PBXProject "whiskey note" */;
+			buildConfigurationList = 742E36322D59D4AE001B11E1 /* Build configuration list for PBXProject "whiskey-note" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +200,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				742E36362D59D4AE001B11E1 /* whiskey note */,
-				742E36482D59D4B0001B11E1 /* whiskey noteTests */,
-				742E36522D59D4B0001B11E1 /* whiskey noteUITests */,
+				742E36362D59D4AE001B11E1 /* whiskey-note */,
+				742E36482D59D4B0001B11E1 /* whiskey-noteTests */,
+				742E36522D59D4B0001B11E1 /* whiskey-noteUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		742E364B2D59D4B0001B11E1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 742E36362D59D4AE001B11E1 /* whiskey note */;
+			target = 742E36362D59D4AE001B11E1 /* whiskey-note */;
 			targetProxy = 742E364A2D59D4B0001B11E1 /* PBXContainerItemProxy */;
 		};
 		742E36552D59D4B0001B11E1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 742E36362D59D4AE001B11E1 /* whiskey note */;
+			target = 742E36362D59D4AE001B11E1 /* whiskey-note */;
 			targetProxy = 742E36542D59D4B0001B11E1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -461,7 +461,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/whiskey note.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/whiskey note";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/whiskey-note.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/whiskey-note";
 			};
 			name = Debug;
 		};
@@ -480,7 +480,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/whiskey note.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/whiskey note";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/whiskey-note.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/whiskey-note";
 			};
 			name = Release;
 		};
@@ -521,7 +521,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		742E36322D59D4AE001B11E1 /* Build configuration list for PBXProject "whiskey note" */ = {
+		742E36322D59D4AE001B11E1 /* Build configuration list for PBXProject "whiskey-note" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				742E365B2D59D4B0001B11E1 /* Debug */,
@@ -530,7 +530,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		742E365D2D59D4B0001B11E1 /* Build configuration list for PBXNativeTarget "whiskey note" */ = {
+		742E365D2D59D4B0001B11E1 /* Build configuration list for PBXNativeTarget "whiskey-note" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				742E365E2D59D4B0001B11E1 /* Debug */,
@@ -539,7 +539,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		742E36602D59D4B0001B11E1 /* Build configuration list for PBXNativeTarget "whiskey noteTests" */ = {
+		742E36602D59D4B0001B11E1 /* Build configuration list for PBXNativeTarget "whiskey-noteTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				742E36612D59D4B0001B11E1 /* Debug */,
@@ -548,7 +548,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		742E36632D59D4B0001B11E1 /* Build configuration list for PBXNativeTarget "whiskey noteUITests" */ = {
+		742E36632D59D4B0001B11E1 /* Build configuration list for PBXNativeTarget "whiskey-noteUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				742E36642D59D4B0001B11E1 /* Debug */,
