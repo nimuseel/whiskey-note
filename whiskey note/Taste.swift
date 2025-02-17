@@ -1,14 +1,13 @@
 import Foundation
-import SwiftData
 
-@Model
-final class Taste {
-    @Attribute(.unique)
-    var name: String
-    var value: Int
+enum Taste: String, Codable, Identifiable, CaseIterable {
+    case Sweet = "단맛"
+    case Salty = "짠맛"
+    case Sour = "신맛"
+    case Bitter = "쓴맛"
+    case Umami = "감칠맛"
     
-    init(name: String, value: Int) {
-        self.name = name
-        self.value = value
+    var id: String {
+        self.rawValue
     }
 }
