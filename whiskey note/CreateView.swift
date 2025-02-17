@@ -95,14 +95,6 @@ struct CreateView: View {
             tastes != initialTastes &&
             mouthfeels != initialMouthfeels ||
             finishes != initialFinishes
-        
-        print(whiskeyName != initialWhiskeyName &&
-              whiskeyCategory != initialWhiskeyCategory &&
-              foodName != initialFoodName &&
-              aromas != initialAromas &&
-              tastes != initialTastes &&
-              mouthfeels != initialMouthfeels ||
-              finishes != initialFinishes)
     }
     
     var body: some View {

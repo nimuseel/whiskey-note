@@ -4,7 +4,7 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
-    @State private var isCreatePagePresent = false
+    @State private var isCreateViewPresent = false
     
     var body: some View {
         NavigationStack {
@@ -21,11 +21,11 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem {
                     Button("추가하기") {
-                        isCreatePagePresent = true
+                        isCreateViewPresent = true
                     }
                 }
             }
-            .navigationDestination(isPresented: $isCreatePagePresent, destination: {
+            .navigationDestination(isPresented: $isCreateViewPresent, destination: {
                 CreateView()
             })
         }
