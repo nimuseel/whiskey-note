@@ -7,11 +7,10 @@ final class Whiskey {
     var id: UUID = UUID()
     var name: String
     var category: String
-    var tastingNotes: [TasteNote]
+    @Relationship(deleteRule: .cascade) var tasteNotes: [TasteNote] = []
     
-    init(name: String, category: String, tastingNotes: [TasteNote] = []) {
+    init(name: String, category: String) {
         self.name = name
         self.category = category
-        self.tastingNotes = tastingNotes
     }
 }

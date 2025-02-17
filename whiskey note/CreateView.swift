@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 class DirtyCheckViewModel: ObservableObject {
     @Published var isDirty = false
@@ -6,6 +7,8 @@ class DirtyCheckViewModel: ObservableObject {
 
 struct CreateView: View {
     @ObservedObject private var viewModel = DirtyCheckViewModel()
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) private var dismiss
     
     @State private var whiskeyName: String = "" {
         didSet {
@@ -23,68 +26,37 @@ struct CreateView: View {
         }
     }
     
-    @State private var aromas: [Aroma:Bool] = [
-        .Fruity: false,
-        .Floral: false,
-        .Grainy: false,
-        .Nutty: false,
-        .Spicy: false,
-        .Woody: false,
-        .Peaty: false,
-        .Winey: false,
-        .Feinty: false,
-    ] {
+    @State private var aromas: [Aroma] = [] {
         didSet {
             checkDirty()
         }
     }
     
-    @State private var tastes: [Taste:Bool] = [
-        .Sweet: false,
-        .Salty: false,
-        .Sour: false,
-        .Bitter: false,
-        .Umami: false,
-    ] {
+    @State private var tastes: [Taste] = [] {
         didSet {
             checkDirty()
         }
     }
     
-    @State private var mouthfeels: [Mouthfeel:Bool] = [
-        .Light: false,
-        .Medium: false,
-        .Full: false,
-        .Smooth: false,
-        .Rough: false,
-        .Oily: false,
-        .Dry: false,
-    ] {
+    @State private var mouthfeels: [Mouthfeel] = [] {
         didSet {
             checkDirty()
         }
     }
     
-    @State private var finishes: [Finish:Bool] = [
-        .Short: false,
-        .Medium: false,
-        .Long: false,
-        .Warm: false,
-        .Spicy: false,
-        .Dry: false,
-    ] {
+    @State private var finishes: [Finish] = [] {
         didSet {
             checkDirty()
         }
     }
     
-   @State private var initialWhiskeyName: String = ""
-   @State private var initialWhiskeyCategory: String = ""
-   @State private var initialFoodName: String = ""
-   @State private var initialAromas: [Aroma: Bool] = [:]
-   @State private var initialTastes: [Taste: Bool] = [:]
-   @State private var initialMouthfeels: [Mouthfeel: Bool] = [:]
-   @State private var initialFinishes: [Finish: Bool] = [:]
+    @State private var initialWhiskeyName: String = ""
+    @State private var initialWhiskeyCategory: String = ""
+    @State private var initialFoodName: String = ""
+    @State private var initialAromas: [Aroma] = []
+    @State private var initialTastes: [Taste] = []
+    @State private var initialMouthfeels: [Mouthfeel] = []
+    @State private var initialFinishes: [Finish] = []
     
     private func checkDirty() {
         viewModel.isDirty =
@@ -98,93 +70,130 @@ struct CreateView: View {
     }
     
     var body: some View {
-        ScrollView {
-            VStack {
-                GroupBox(label: Text("위스키")) {
-                    TextField(text: $whiskeyName) {
-                        Text("위스키 이름 입력")
+        NavigationView {
+            ScrollView {
+                VStack {
+                    GroupBox(label: Text("위스키")) {
+                        TextField(text: $whiskeyName) {
+                            Text("위스키 이름 입력")
+                        }
                     }
-                }
-                GroupBox(label: Text("위스키 종류")) {
-                    TextField(text: $whiskeyCategory) {
-                        Text("위스키 종류 입력")
+                    GroupBox(label: Text("위스키 종류")) {
+                        TextField(text: $whiskeyCategory) {
+                            Text("위스키 종류 입력")
+                        }
                     }
-                }
-                GroupBox(label: Text("향")) {
-                    ForEach(Aroma.allCases) { aroma in
-                        HStack {
-                            Toggle(aroma.rawValue, isOn: Binding(
-                                get: { aromas[aroma] ?? false },
-                                set: { aromas[aroma] = $0 }
-                            ))
-                            .toggleStyle(.switch)
+                    GroupBox(label: Text("향")) {
+                        ForEach(Aroma.allCases) { aroma in
+                            HStack {
+                                Toggle(aroma.rawValue, isOn: Binding(
+                                    get: { aromas.contains(aroma) },
+                                    set: { isOn in
+                                        if isOn {
+                                            aromas.append(aroma)
+                                        } else {
+                                            aromas.removeAll(where: { $0 == aroma })
+                                        }
+                                    }
+                                ))
+                                .toggleStyle(.switch)
+                            }
+                        }
+                    }
+                    GroupBox(label: Text("맛")) {
+                        ForEach(Taste.allCases) { taste in
+                            HStack {
+                                Toggle(taste.rawValue, isOn: Binding(
+                                    get: { tastes.contains(taste) },
+                                    set: { isOn in
+                                        if isOn {
+                                            tastes.append(taste)
+                                        } else {
+                                            tastes.removeAll(where: { $0 == taste })
+                                        }
+                                    }
+                                ))
+                                .toggleStyle(.switch)
+                            }
+                        }
+                    }
+                    GroupBox(label: Text("질감")) {
+                        ForEach(Mouthfeel.allCases) { mouthfeel in
+                            HStack {
+                                Toggle(mouthfeel.rawValue, isOn: Binding(
+                                    get: { mouthfeels.contains(mouthfeel) },
+                                    set: { isOn in
+                                        if isOn {
+                                            mouthfeels.append(mouthfeel)
+                                        } else {
+                                            mouthfeels.removeAll(where: { $0 == mouthfeel })
+                                        }
+                                    }
+                                ))
+                                .toggleStyle(.switch)
+                            }
+                        }
+                    }
+                    GroupBox(label: Text("마무리")) {
+                        ForEach(Finish.allCases) { finish in
+                            HStack {
+                                Toggle(finish.rawValue, isOn: Binding(
+                                    get: { finishes.contains(finish) },
+                                    set: { isOn in
+                                        if isOn {
+                                            finishes.append(finish)
+                                        } else {
+                                            finishes.removeAll(where: { $0 == finish })
+                                        }
+                                    }
+                                ))
+                                .toggleStyle(.switch)
+                            }
+                        }
+                    }
+                    GroupBox(label: Text("같이 먹은 안주")) {
+                        TextField(text: $foodName) {
+                            Text("같이 먹은 안주 입력")
                         }
                     }
                 }
-                GroupBox(label: Text("맛")) {
-                    ForEach(Taste.allCases) { taste in
-                        HStack {
-                            Toggle(taste.rawValue, isOn: Binding(
-                                get: { tastes[taste] ?? false },
-                                set: { tastes[taste] = $0 }
-                            ))
-                            .toggleStyle(.switch)
+                .padding(.horizontal)
+                
+                Spacer()
+            }
+            .navigationTitle("노트 추가하기")
+            .toolbar {
+                ToolbarItem {
+                    Button("추가") {
+                        if viewModel.isDirty {
+                            let newWhiskey = Whiskey(name: whiskeyName, category: whiskeyCategory)
+                            let newTasteNote = TasteNote(whiskey: newWhiskey, aroma: aromas, taste: tastes, mouthfeel: mouthfeels, finish: finishes, dish: foodName)
+                            
+                            newWhiskey.tasteNotes.append(newTasteNote)
+                            newTasteNote.whiskey = newWhiskey
+                            
+                            modelContext.insert(newWhiskey)
+                            modelContext.insert(newTasteNote)
+                                                     
+                            viewModel.isDirty = false
+                            
+                            dismiss()
+                        } else {
+                            
                         }
                     }
-                }
-                GroupBox(label: Text("질감")) {
-                    ForEach(Mouthfeel.allCases) { mouthfeel in
-                        HStack {
-                            Toggle(mouthfeel.rawValue, isOn: Binding(
-                                get: { mouthfeels[mouthfeel] ?? false },
-                                set: { mouthfeels[mouthfeel] = $0 }
-                            ))
-                            .toggleStyle(.switch)
-                        }
-                    }
-                }
-                GroupBox(label: Text("마무리")) {
-                    ForEach(Finish.allCases) { finish in
-                        HStack {
-                            Toggle(finish.rawValue, isOn: Binding(
-                                get: { finishes[finish] ?? false },
-                                set: { finishes[finish] = $0 }
-                            ))
-                            .toggleStyle(.switch)
-                        }
-                    }
-                }
-                GroupBox(label: Text("같이 먹은 안주")) {
-                    TextField(text: $foodName) {
-                        Text("같이 먹은 안주 입력")
-                    }
+                    .disabled(!viewModel.isDirty)
                 }
             }
-            .padding(.horizontal)
-            
-            
-            Spacer()
-        }
-        .toolbar {
-            ToolbarItem {
-                Button("추가") {
-                    if viewModel.isDirty {
-                        print("dirty")
-                    } else {
-                        print("clean")
-                    }
-                }
-                .disabled(!viewModel.isDirty)
+            .onAppear {
+              initialWhiskeyName = whiskeyName
+              initialWhiskeyCategory = whiskeyCategory
+              initialFoodName = foodName
+              initialAromas = aromas
+              initialTastes = tastes
+              initialMouthfeels = mouthfeels
+              initialFinishes = finishes
             }
-        }
-        .onAppear {
-          initialWhiskeyName = whiskeyName
-          initialWhiskeyCategory = whiskeyCategory
-          initialFoodName = foodName
-          initialAromas = aromas
-          initialTastes = tastes
-          initialMouthfeels = mouthfeels
-          initialFinishes = finishes
         }
     }
 }
