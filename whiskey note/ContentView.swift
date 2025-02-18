@@ -14,10 +14,11 @@ struct ContentView: View {
                         UpdateView(tasteNote: .constant(tasteNote))
                     } label: {
                         VStack(alignment: .leading) {
-                            Text("\(tasteNote.whiskey.name)")
-                            HStack {
-                                Text("\(tasteNote.whiskey.category) / \(tasteNote.dish)").font(.footnote)
-                           }
+                            HStack(spacing: 4) {
+                                Text(tasteNote.whiskey.name).font(.subheadline)
+                                Text("/ \(tasteNote.whiskey.category)").font(.subheadline)
+                            }
+                            Text(tasteNote.dish).font(.footnote).foregroundColor(.secondary)
                         }
                     }
                 }
