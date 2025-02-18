@@ -11,7 +11,7 @@ struct ContentView: View {
             List {
                 ForEach(tasteNotes.sorted(by: { $0.createdAt < $1.createdAt })) { tasteNote in
                     NavigationLink {
-                        Text("hi")
+                        UpdateView(tasteNote: .constant(tasteNote))
                     } label: {
                         VStack(alignment: .leading) {
                             Text("\(tasteNote.whiskey.name)")
