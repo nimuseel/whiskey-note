@@ -1,0 +1,22 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="512" height="512" rx="100" fill="#333333"/>
+
+    <!-- On the Rocks Glass (Tumbler) -->
+    <path d="M180 400 H340 L360 150 H160 L180 400 Z" fill="#F2F2F2" stroke="#FFFFFF" stroke-width="10"/>
+
+    <!-- Whiskey -->
+    <path d="M190 380 H330 L345 200 H175 L190 380 Z" fill="url(#whiskeyGradient)"/>
+
+    <!-- Ice Cubes -->
+		<polygon points="220,250 250,230 280,260 250,280" fill="#ADD8E6"/>
+    <polygon points="260,300 290,280 320,310 290,330" fill="#B0E2FF"/>
+
+    <!-- Gradient Definition -->
+    <defs>
+        <linearGradient id="whiskeyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#C58C24"/>
+            <stop offset="100%" stop-color="#9E6B1C"/>
+        </linearGradient>
+    </defs>
+</svg>
