@@ -167,7 +167,7 @@ struct CreateView: View {
                     Button("추가") {
                         if viewModel.isDirty {
                             let newWhiskey = Whiskey(name: whiskeyName, category: whiskeyCategory)
-                            let newTasteNote = TasteNote(whiskey: newWhiskey, aroma: aromas, taste: tastes, mouthfeel: mouthfeels, finish: finishes, dish: foodName)
+                            let newTasteNote = TasteNote(whiskey: newWhiskey, aroma: aromas, taste: tastes, mouthfeel: mouthfeels, finish: finishes, dish: foodName, createdAt: Date())
                             
                             newWhiskey.tasteNotes.append(newTasteNote)
                             newTasteNote.whiskey = newWhiskey
