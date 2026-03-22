@@ -2,6 +2,16 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        Text("리뉴얼 중...")
+        TabView {
+            HomeView()
+                .tabItem { Label("홈", systemImage: "house.fill") }
+
+            NoteListView()
+                .tabItem { Label("노트", systemImage: "note.text") }
+
+            StatsView()
+                .tabItem { Label("통계", systemImage: "chart.bar.fill") }
+        }
+        .tint(AppColors.accent)
     }
 }
