@@ -75,7 +75,7 @@ struct HomeView: View {
 
     private var profileCard: some View {
         HStack(spacing: 0) {
-            statCell(label: "기록", value: "\(notes.count)개")
+            statCell(label: "기록", value: "\(notes.count)")
             Divider().frame(height: 40)
             statCell(label: "평균 별점", value: averageRating)
             Divider().frame(height: 40)
