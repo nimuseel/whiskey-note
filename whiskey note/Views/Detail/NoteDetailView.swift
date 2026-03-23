@@ -104,7 +104,7 @@ struct NoteDetailView: View {
                 if let abv = note.abv { Text(String(format: "· %.1f%%", abv)) }
                 if let price = note.price,
                    let formatted = priceFormatter.string(from: NSNumber(value: price)) {
-                    Text("· " + String(format: String(localized: "%@원"), formatted))
+                    Text("· " + (Locale.current.language.languageCode?.identifier == "ko" ? "\(formatted)원" : "$\(formatted)"))
                 }
             }
             .font(.subheadline)
