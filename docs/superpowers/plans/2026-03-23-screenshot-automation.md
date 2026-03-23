@@ -413,7 +413,7 @@ git commit -m "feat(screenshot): add ScreenshotSeedData with 5 demo whiskey note
 StarRatingView 조작 노트:
 - HStack의 accessibilityIdentifier "starRating" 사용
 - 4번째 별(오른쪽 반 = rating 4.0)을 coordinate tap으로 선택
-- 5개 별이 균등 배치 → dx=0.85 (5번째 별 왼쪽 반 근방)
+- 5개 별이 균등 배치 → dx=0.75 (4번째 별 오른쪽 반: 0.70~0.80 구간)
 
 HomeView 노트 탭:
 - `recentSection`의 NavigationLink는 `.buttonStyle(.plain)` → staticTexts로 접근 가능
