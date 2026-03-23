@@ -11,7 +11,8 @@ struct NoteDetailView: View {
 
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
-        f.dateFormat = "yyyy.MM.dd"
+        f.dateStyle = .medium
+        f.timeStyle = .none
         return f
     }()
 
@@ -103,7 +104,7 @@ struct NoteDetailView: View {
                 if let abv = note.abv { Text(String(format: "· %.1f%%", abv)) }
                 if let price = note.price,
                    let formatted = priceFormatter.string(from: NSNumber(value: price)) {
-                    Text("· \(formatted)원")
+                    Text("· " + String(format: String(localized: "%@원"), formatted))
                 }
             }
             .font(.subheadline)
