@@ -33,6 +33,7 @@ struct StarRatingView: View {
                     )
             }
         }
+        .accessibilityIdentifier("starRating")
     }
 
     private func starImage(for index: Int) -> Image {

@@ -31,6 +31,7 @@ struct WizardStep4View: View {
                         .foregroundStyle(AppColors.accent)
                     ZStack(alignment: .topLeading) {
                         TextEditor(text: $memo)
+                            .accessibilityIdentifier("memoEditor")
                             .frame(minHeight: 120)
                             .padding(8)
                             .background(Color.white)

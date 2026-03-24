@@ -66,6 +66,7 @@ struct HomeView: View {
                         .clipShape(Circle())
                         .shadow(radius: 4, y: 2)
                 }
+                .accessibilityIdentifier("fab")
                 .padding(20)
             }
             .navigationTitle("위스키 노트")
