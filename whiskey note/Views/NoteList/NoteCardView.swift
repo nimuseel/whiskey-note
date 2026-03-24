@@ -33,7 +33,7 @@ struct NoteCardView: View {
                 }
                 if let age = note.age {
                     Text("·")
-                    Text("\(age)yr")
+                    Text("\(age)\(String(localized: "년"))")
                 }
             }
             .font(.caption)

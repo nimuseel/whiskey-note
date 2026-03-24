@@ -100,11 +100,12 @@ struct NoteDetailView: View {
                 .foregroundStyle(AppColors.textPrimary)
             HStack(spacing: 4) {
                 Text(WhiskeyCategory(rawValue: note.category)?.localizedName ?? note.category)
-                if let age = note.age { Text("· \(age)yr") }
+                if let age = note.age { Text("· \(age)\(String(localized: "년"))") }
                 if let abv = note.abv { Text(String(format: "· %.1f%%", abv)) }
                 if let price = note.price,
                    let formatted = priceFormatter.string(from: NSNumber(value: price)) {
-                    Text("· " + (Locale.current.language.languageCode?.identifier == "ko" ? "\(formatted)원" : "$\(formatted)"))
+                    let isKorean = Bundle.main.preferredLocalizations.first == "ko"
+                    Text("· " + (isKorean ? "\(formatted)원" : "$\(formatted)"))
                 }
             }
             .font(.subheadline)
