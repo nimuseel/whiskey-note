@@ -27,43 +27,43 @@ final class ScreenshotTests: XCTestCase {
         snapshot("01_홈")
 
         // ── 02 노트 상세 ─────────────────────────────────────────────────────
-        app.staticTexts["Laphroaig 10yr"].tap()
+        app.staticTexts["Laphroaig 10yr"].firstMatch.tap()
         sleep(1)
         snapshot("02_노트_상세")
 
         // ── 03 통계 ──────────────────────────────────────────────────────────
         app.navigationBars.buttons.firstMatch.tap()   // 뒤로
         Thread.sleep(forTimeInterval: 0.5)
-        app.tabBars.buttons["통계"].tap()
+        app.tabBars.firstMatch.buttons.element(boundBy: 2).tap()   // 통계 탭 (3번째)
         sleep(1)
         snapshot("03_통계")
 
         // ── 04 위스키 추가 Step 1 ─────────────────────────────────────────────
-        app.tabBars.buttons["홈"].tap()
+        app.tabBars.firstMatch.buttons.element(boundBy: 0).tap()   // 홈 탭 (1번째)
         Thread.sleep(forTimeInterval: 0.5)
         app.buttons["fab"].tap()
         Thread.sleep(forTimeInterval: 0.5)
 
-        let nameField = app.textFields["예: Laphroaig 10yr"]
+        let nameField = app.textFields["nameField"]
         nameField.tap()
         nameField.typeText("Ardbeg 10yr")
 
-        let abvField = app.textFields["예: 43.0"]
+        let abvField = app.textFields["abvField"]
         abvField.tap()
         abvField.typeText("46.0")
 
-        let ageField = app.textFields["예: 10"]
+        let ageField = app.textFields["ageField"]
         ageField.tap()
         ageField.typeText("10")
 
-        let priceField = app.textFields["예: 80000"]
+        let priceField = app.textFields["priceField"]
         priceField.tap()
         priceField.typeText("95000")
 
         snapshot("04_위스키_추가_1")
 
         // ── 05 위스키 추가 Step 2 (아로마) ────────────────────────────────────
-        app.buttons["다음"].tap()
+        app.buttons["wizardNext"].tap()
         Thread.sleep(forTimeInterval: 0.5)
 
         let s2 = app.sliders
@@ -75,7 +75,7 @@ final class ScreenshotTests: XCTestCase {
         snapshot("05_위스키_추가_2")
 
         // ── 06 위스키 추가 Step 3 (맛·질감·마무리) ───────────────────────────
-        app.buttons["다음"].tap()
+        app.buttons["wizardNext"].tap()
         Thread.sleep(forTimeInterval: 0.5)
 
         let s3 = app.sliders
@@ -88,7 +88,7 @@ final class ScreenshotTests: XCTestCase {
         snapshot("06_위스키_추가_3")
 
         // ── 07 위스키 추가 Step 4 (총평) ─────────────────────────────────────
-        app.buttons["다음"].tap()
+        app.buttons["wizardNext"].tap()
         Thread.sleep(forTimeInterval: 0.5)
 
         let starRating = app.otherElements["starRating"]

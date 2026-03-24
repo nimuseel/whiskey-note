@@ -53,6 +53,7 @@ struct WizardStep1View: View {
                 VStack(spacing: 12) {
                     formField(label: "위스키 이름 *") {
                         TextField("예: Laphroaig 10yr", text: $name)
+                            .accessibilityIdentifier("nameField")
                     }
 
                     formField(label: "종류") {
@@ -70,16 +71,19 @@ struct WizardStep1View: View {
                         formField(label: "도수 (%)") {
                             TextField("예: 43.0", text: $abv)
                                 .keyboardType(.decimalPad)
+                                .accessibilityIdentifier("abvField")
                         }
                         formField(label: "숙성 연수") {
                             TextField("예: 10", text: $age)
                                 .keyboardType(.numberPad)
+                                .accessibilityIdentifier("ageField")
                         }
                     }
 
                     formField(label: "가격 (원)") {
                         TextField("예: 80000", text: $price)
                             .keyboardType(.numberPad)
+                            .accessibilityIdentifier("priceField")
                     }
                 }
             }

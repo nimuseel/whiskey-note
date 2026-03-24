@@ -98,6 +98,7 @@ struct NoteWizardView: View {
         ToolbarItem(placement: .confirmationAction) {
             if currentStep < 4 {
                 Button("다음") { currentStep += 1 }
+                    .accessibilityIdentifier("wizardNext")
                     .disabled(currentStep == 1 && name.trimmingCharacters(in: .whitespaces).isEmpty)
             } else {
                 Button("저장") { saveNote() }
