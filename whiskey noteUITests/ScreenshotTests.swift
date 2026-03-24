@@ -1,0 +1,113 @@
+import XCTest
+
+final class ScreenshotTests: XCTestCase {
+
+    var app: XCUIApplication!
+
+    @MainActor
+    override func setUp() {
+        super.setUp()
+        continueAfterFailure = false
+        app = XCUIApplication()
+        setupSnapshot(app)
+        app.launchArguments = ["-SCREENSHOT_MODE"]
+        app.launch()
+        // 시드 데이터 반영 대기
+        sleep(2)
+    }
+
+    override func tearDown() {
+        app = nil
+        super.tearDown()
+    }
+
+    @MainActor
+    func testTakeScreenshots() throws {
+        // ── 01 홈 ────────────────────────────────────────────────────────────
+        snapshot("01_홈")
+
+        // ── 02 노트 상세 ─────────────────────────────────────────────────────
+        app.staticTexts["Laphroaig 10yr"].tap()
+        sleep(1)
+        snapshot("02_노트_상세")
+
+        // ── 03 통계 ──────────────────────────────────────────────────────────
+        app.navigationBars.buttons.firstMatch.tap()   // 뒤로
+        Thread.sleep(forTimeInterval: 0.5)
+        app.tabBars.buttons["통계"].tap()
+        sleep(1)
+        snapshot("03_통계")
+
+        // ── 04 위스키 추가 Step 1 ─────────────────────────────────────────────
+        app.tabBars.buttons["홈"].tap()
+        Thread.sleep(forTimeInterval: 0.5)
+        app.buttons["fab"].tap()
+        Thread.sleep(forTimeInterval: 0.5)
+
+        let nameField = app.textFields["예: Laphroaig 10yr"]
+        nameField.tap()
+        nameField.typeText("Ardbeg 10yr")
+
+        let abvField = app.textFields["예: 43.0"]
+        abvField.tap()
+        abvField.typeText("46.0")
+
+        let ageField = app.textFields["예: 10"]
+        ageField.tap()
+        ageField.typeText("10")
+
+        let priceField = app.textFields["예: 80000"]
+        priceField.tap()
+        priceField.typeText("95000")
+
+        snapshot("04_위스키_추가_1")
+
+        // ── 05 위스키 추가 Step 2 (아로마) ────────────────────────────────────
+        app.buttons["다음"].tap()
+        Thread.sleep(forTimeInterval: 0.5)
+
+        let s2 = app.sliders
+        if s2.count > 0 { s2.element(boundBy: 0).adjust(toNormalizedSliderPosition: 0.4) }  // 과일 2
+        if s2.count > 1 { s2.element(boundBy: 1).adjust(toNormalizedSliderPosition: 0.6) }  // 꽃 3
+        if s2.count > 3 { s2.element(boundBy: 3).adjust(toNormalizedSliderPosition: 0.8) }  // 견과류 4
+        if s2.count > 6 { s2.element(boundBy: 6).adjust(toNormalizedSliderPosition: 1.0) }  // 피트 5
+
+        snapshot("05_위스키_추가_2")
+
+        // ── 06 위스키 추가 Step 3 (맛·질감·마무리) ───────────────────────────
+        app.buttons["다음"].tap()
+        Thread.sleep(forTimeInterval: 0.5)
+
+        let s3 = app.sliders
+        if s3.count > 0  { s3.element(boundBy: 0).adjust(toNormalizedSliderPosition: 0.6) }  // 단맛 3
+        if s3.count > 3  { s3.element(boundBy: 3).adjust(toNormalizedSliderPosition: 0.4) }  // 쓴맛 2
+        if s3.count > 7  { s3.element(boundBy: 7).adjust(toNormalizedSliderPosition: 0.8) }  // 무거움 4
+        if s3.count > 8  { s3.element(boundBy: 8).adjust(toNormalizedSliderPosition: 1.0) }  // 부드러움 5
+        if s3.count > 14 { s3.element(boundBy: 14).adjust(toNormalizedSliderPosition: 0.8) } // 긴 4
+
+        snapshot("06_위스키_추가_3")
+
+        // ── 07 위스키 추가 Step 4 (총평) ─────────────────────────────────────
+        app.buttons["다음"].tap()
+        Thread.sleep(forTimeInterval: 0.5)
+
+        let starRating = app.otherElements["starRating"]
+        if starRating.exists {
+            starRating.coordinate(withNormalizedOffset: CGVector(dx: 0.75, dy: 0.5)).tap()
+        }
+
+        let isKorean = Locale.current.language.languageCode?.identifier == "ko"
+        let memoText = isKorean
+            ? "바닷바람과 피트가 압도적이지만 뒷맛이 놀랍도록 달콤하다"
+            : "Overwhelming sea breeze and peat, yet the finish is surprisingly sweet"
+
+        let memoEditor = app.textViews["memoEditor"]
+        memoEditor.tap()
+        memoEditor.typeText(memoText)
+
+        app.navigationBars.staticTexts["총평"].tap()
+        Thread.sleep(forTimeInterval: 0.5)
+
+        snapshot("07_위스키_추가_4")
+    }
+}
