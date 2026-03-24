@@ -7,6 +7,17 @@ enum WhiskeyCategory: String, CaseIterable, Codable {
     case irish      = "Irish"
     case japanese   = "Japanese"
     case other      = "Other"
+
+    var localizedName: String {
+        switch self {
+        case .singleMalt: String(localized: "싱글 몰트")
+        case .blended:    String(localized: "블렌디드")
+        case .bourbon:    String(localized: "버번")
+        case .irish:      String(localized: "아이리시")
+        case .japanese:   String(localized: "재패니즈")
+        case .other:      String(localized: "기타")
+        }
+    }
 }
 
 enum FlavorType: String, CaseIterable, Codable {

@@ -99,7 +99,7 @@ struct NoteDetailView: View {
                 .font(.title2.bold())
                 .foregroundStyle(AppColors.textPrimary)
             HStack(spacing: 4) {
-                Text(note.category)
+                Text(WhiskeyCategory(rawValue: note.category)?.localizedName ?? note.category)
                 if let age = note.age { Text("· \(age)yr") }
                 if let abv = note.abv { Text(String(format: "· %.1f%%", abv)) }
                 if let price = note.price,
@@ -123,11 +123,11 @@ struct NoteDetailView: View {
                 .filter { $0.flavorType == section.type.rawValue && $0.intensity > 0 }
                 .sorted { $0.intensity > $1.intensity }
             if !items.isEmpty {
-                sectionHeader(section.title)
+                sectionHeader(LocalizedStringKey(section.title))
                 ForEach(items, id: \.id) { fi in
                     if let flavorItem = FlavorConstants.all.first(where: { $0.name == fi.name }) {
                         HStack {
-                            Text("\(flavorItem.emoji) \(fi.name)")
+                            Text("\(flavorItem.emoji) \(NSLocalizedString(fi.name, comment: ""))")
                                 .font(.subheadline)
                                 .foregroundStyle(AppColors.textPrimary)
                             Spacer()
@@ -146,7 +146,7 @@ struct NoteDetailView: View {
         }
     }
 
-    private func sectionHeader(_ title: String) -> some View {
+    private func sectionHeader(_ title: LocalizedStringKey) -> some View {
         Text(title)
             .font(.headline)
             .foregroundStyle(AppColors.accent)

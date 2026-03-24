@@ -59,7 +59,7 @@ struct WizardStep1View: View {
                     formField(label: "종류") {
                         Picker("종류", selection: $category) {
                             ForEach(WhiskeyCategory.allCases, id: \.rawValue) { cat in
-                                Text(cat.rawValue).tag(cat.rawValue)
+                                Text(cat.localizedName).tag(cat.rawValue)
                             }
                         }
                         .pickerStyle(.menu)
@@ -92,7 +92,7 @@ struct WizardStep1View: View {
     }
 
     @ViewBuilder
-    private func formField<Content: View>(label: String, @ViewBuilder content: () -> Content) -> some View {
+    private func formField<Content: View>(label: LocalizedStringKey, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(label)
                 .font(.caption)

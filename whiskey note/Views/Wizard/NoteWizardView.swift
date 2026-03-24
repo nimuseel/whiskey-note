@@ -110,10 +110,10 @@ struct NoteWizardView: View {
 
     private var stepTitle: String {
         switch currentStep {
-        case 1: "사진 & 기본 정보"
-        case 2: "향 (Aroma)"
-        case 3: "맛·질감·마무리"
-        default: "총평"
+        case 1: String(localized: "사진 & 기본 정보")
+        case 2: String(localized: "향 (Aroma)")
+        case 3: String(localized: "맛·질감·마무리")
+        default: String(localized: "총평")
         }
     }
 

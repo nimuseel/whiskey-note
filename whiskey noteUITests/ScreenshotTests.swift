@@ -109,7 +109,7 @@ final class ScreenshotTests: XCTestCase {
         memoEditor.tap()
         memoEditor.typeText(memoText)
 
-        app.navigationBars.staticTexts["총평"].tap()
+        app.navigationBars.firstMatch.tap()
         Thread.sleep(forTimeInterval: 0.5)
 
         snapshot("07_위스키_추가_4")

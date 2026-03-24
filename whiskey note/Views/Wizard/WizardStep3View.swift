@@ -14,7 +14,7 @@ struct WizardStep3View: View {
             VStack(alignment: .leading, spacing: 20) {
                 ForEach(sections, id: \.title) { section in
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(section.title)
+                        Text(LocalizedStringKey(section.title))
                             .font(.headline)
                             .foregroundStyle(AppColors.accent)
 

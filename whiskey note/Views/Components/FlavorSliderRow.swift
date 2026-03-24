@@ -10,7 +10,7 @@ struct FlavorSliderRow: View {
                 .font(.title3)
                 .frame(width: 28)
 
-            Text(item.name)
+            Text(LocalizedStringKey(item.name))
                 .font(.subheadline)
                 .foregroundStyle(AppColors.textPrimary)
                 .frame(width: 60, alignment: .leading)

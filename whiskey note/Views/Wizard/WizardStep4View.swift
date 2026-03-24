@@ -16,9 +16,15 @@ struct WizardStep4View: View {
                     HStack {
                         StarRatingView(rating: $rating)
                         Spacer()
-                        Text(rating == 0 ? "평가 없음" : String(format: "%.1f", rating))
-                            .font(.subheadline)
-                            .foregroundStyle(AppColors.textSecondary)
+                        Group {
+                            if rating == 0 {
+                                Text("평가 없음")
+                            } else {
+                                Text(String(format: "%.1f", rating))
+                            }
+                        }
+                        .font(.subheadline)
+                        .foregroundStyle(AppColors.textSecondary)
                     }
                 }
 

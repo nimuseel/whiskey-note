@@ -64,7 +64,7 @@ struct StatsView: View {
                 let maxAvg = topAromaData.first?.avg ?? 1
                 ForEach(topAromaData, id: \.name) { item in
                     HStack(spacing: 8) {
-                        Text("\(item.emoji) \(item.name)")
+                        Text("\(item.emoji) \(NSLocalizedString(item.name, comment: ""))")
                             .font(.subheadline)
                             .frame(width: 90, alignment: .leading)
                         GeometryReader { geo in
@@ -104,7 +104,7 @@ struct StatsView: View {
                 .foregroundStyle(AppColors.accent)
             FlowLayout(spacing: 8) {
                 ForEach(categoryCounts, id: \.category) { item in
-                    Text("\(item.category) \(Int(item.pct.rounded()))%")
+                    Text("\(WhiskeyCategory(rawValue: item.category)?.localizedName ?? item.category) \(Int(item.pct.rounded()))%")
                         .font(.caption)
                         .padding(.horizontal, 10)
                         .padding(.vertical, 5)

@@ -26,7 +26,7 @@ struct NoteCardView: View {
             }
 
             HStack(spacing: 4) {
-                Text(note.category)
+                Text(WhiskeyCategory(rawValue: note.category)?.localizedName ?? note.category)
                 if let abv = note.abv {
                     Text("·")
                     Text(String(format: "%.1f%%", abv))
@@ -43,7 +43,7 @@ struct NoteCardView: View {
                 HStack(spacing: 6) {
                     ForEach(topAromaTags, id: \.id) { fi in
                         if let item = FlavorConstants.all.first(where: { $0.name == fi.name }) {
-                            Text("\(item.emoji) \(fi.name)")
+                            Text("\(item.emoji) \(NSLocalizedString(fi.name, comment: ""))")
                                 .font(.caption2)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 3)

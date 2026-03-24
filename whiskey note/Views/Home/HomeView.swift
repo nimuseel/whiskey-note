@@ -30,7 +30,8 @@ struct HomeView: View {
         }
         let name = sorted.first!.key
         let emoji = FlavorConstants.all.first { $0.name == name }?.emoji ?? ""
-        return "\(emoji) \(name)"
+        let localizedName = NSLocalizedString(name, comment: "")
+        return "\(emoji) \(localizedName)"
     }
 
     var body: some View {
@@ -88,7 +89,7 @@ struct HomeView: View {
         .shadow(color: .black.opacity(0.04), radius: 4, y: 2)
     }
 
-    private func statCell(label: String, value: String) -> some View {
+    private func statCell(label: LocalizedStringKey, value: String) -> some View {
         VStack(spacing: 4) {
             Text(value).font(.headline).foregroundStyle(AppColors.textPrimary)
             Text(label).font(.caption).foregroundStyle(AppColors.textSecondary)
