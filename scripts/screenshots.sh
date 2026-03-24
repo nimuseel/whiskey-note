@@ -56,6 +56,12 @@ for LANG in ko en; do
         REGION="en_US"
     fi
 
+    # 언어 파일 설정 (SnapshotHelper가 앱에 -AppleLanguages 인자 주입하도록)
+    FASTLANE_DIR="$HOME/Library/Caches/tools.fastlane"
+    mkdir -p "$FASTLANE_DIR"
+    echo "$LANG" > "$FASTLANE_DIR/language.txt"
+    echo "$REGION" > "$FASTLANE_DIR/locale.txt"
+
     # 이전 스크린샷 정리
     rm -f "$CACHE_DIR/"*.png
 

@@ -37,17 +37,17 @@ enum ScreenshotSeedData {
             daysAgo: 1
         ),
         NoteSpec(
-            name: "Glenfiddich 18yr",
-            category: WhiskeyCategory.singleMalt.rawValue,
-            abv: 40.0, age: 18, price: 120000, rating: 4.0,
-            memoKo: "건과일과 오크 향이 조화롭고 여운이 길다",
-            memoEn: "Dried fruit and oak in perfect harmony, long finish",
-            dishKo: "호두 타르트, 블루치즈",
-            dishEn: "Walnut tart, blue cheese",
-            aromas: [("과일", 4), ("꽃", 3), ("견과류", 2)],
-            tastes: [("단맛", 4), ("감칠맛", 2)],
-            mouthfeels: [("중간", 3), ("부드러움", 4)],
-            finishes: [("긴", 4), ("드라이", 2)],
+            name: "Johnnie Walker Black",
+            category: WhiskeyCategory.blended.rawValue,
+            abv: 40.0, age: 12, price: 55000, rating: 4.0,
+            memoKo: "스모키함과 과일 향이 균형 잡혀 있고 대중적이다",
+            memoEn: "Smoky and fruity, well-balanced and widely approachable",
+            dishKo: "그릴 스테이크, 고다 치즈",
+            dishEn: "Grilled steak, Gouda cheese",
+            aromas: [("스모키", 3), ("과일", 4), ("스파이시", 2)],
+            tastes: [("단맛", 3), ("쓴맛", 2)],
+            mouthfeels: [("중간", 4), ("드라이", 2)],
+            finishes: [("중간", 3), ("따뜻한", 3)],
             daysAgo: 5
         ),
         NoteSpec(

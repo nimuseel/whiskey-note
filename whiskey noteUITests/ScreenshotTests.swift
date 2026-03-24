@@ -96,8 +96,12 @@ final class ScreenshotTests: XCTestCase {
             starRating.coordinate(withNormalizedOffset: CGVector(dx: 0.75, dy: 0.5)).tap()
         }
 
-        let isKorean = Locale.current.language.languageCode?.identifier == "ko"
-        let memoText = isKorean
+        // Snapshot.deviceLanguage는 setupSnapshot이 language.txt를 읽어 설정
+        // 비어 있으면(fastlane 미사용 시) Locale.current로 폴백
+        let lang = Snapshot.deviceLanguage.isEmpty
+            ? (Locale.current.language.languageCode?.identifier ?? "ko")
+            : Snapshot.deviceLanguage
+        let memoText = (lang == "ko")
             ? "바닷바람과 피트가 압도적이지만 뒷맛이 놀랍도록 달콤하다"
             : "Overwhelming sea breeze and peat, yet the finish is surprisingly sweet"
 
