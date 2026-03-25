@@ -44,7 +44,7 @@ enum ScreenshotSeedData {
             memoEn: "Smoky and fruity, well-balanced and widely approachable",
             dishKo: "그릴 스테이크, 고다 치즈",
             dishEn: "Grilled steak, Gouda cheese",
-            aromas: [("스모키", 3), ("과일", 4), ("스파이시", 2)],
+            aromas: [("피트", 3), ("과일", 4), ("스파이시", 2)],
             tastes: [("단맛", 3), ("쓴맛", 2)],
             mouthfeels: [("중간", 4), ("드라이", 2)],
             finishes: [("중간", 3), ("따뜻한", 3)],
