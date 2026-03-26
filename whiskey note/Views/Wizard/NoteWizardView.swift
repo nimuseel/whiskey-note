@@ -160,8 +160,8 @@ struct NoteWizardView: View {
         dish = note.dish
 
         var dict: [String: Int] = [:]
-        for item in FlavorConstants.all { dict[item.name] = 0 }
-        for fi in note.flavorIntensities { dict[fi.name] = fi.intensity }
+        for item in FlavorConstants.all { dict["\(item.type.rawValue)_\(item.name)"] = 0 }
+        for fi in note.flavorIntensities { dict["\(fi.flavorType)_\(fi.name)"] = fi.intensity }
         intensities = dict
 
         initialSnapshot = EditSnapshot(
@@ -194,9 +194,14 @@ struct NoteWizardView: View {
         if isEditMode {
             for fi in note.flavorIntensities { modelContext.delete(fi) }
         }
-        for (name, intensity) in intensities where intensity > 0 {
-            guard let flavorItem = FlavorConstants.all.first(where: { $0.name == name }) else { continue }
-            let fi = FlavorIntensity(flavorType: flavorItem.type, name: name, intensity: intensity)
+        for (key, intensity) in intensities where intensity > 0 {
+            guard let sep = key.firstIndex(of: "_") else { continue }
+            let typePart = String(key[key.startIndex..<sep])
+            let namePart = String(key[key.index(after: sep)...])
+            guard let flavorItem = FlavorConstants.all.first(where: {
+                $0.type.rawValue == typePart && $0.name == namePart
+            }) else { continue }
+            let fi = FlavorIntensity(flavorType: flavorItem.type, name: namePart, intensity: intensity)
             fi.note = note
             note.flavorIntensities.append(fi)
             modelContext.insert(fi)
