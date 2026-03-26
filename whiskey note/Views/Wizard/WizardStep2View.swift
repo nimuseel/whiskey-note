@@ -17,8 +17,8 @@ struct WizardStep2View: View {
                     FlavorSliderRow(
                         item: item,
                         intensity: Binding(
-                            get: { intensities[item.name] ?? 0 },
-                            set: { intensities[item.name] = $0 }
+                            get: { intensities["\(item.type.rawValue)_\(item.name)"] ?? 0 },
+                            set: { intensities["\(item.type.rawValue)_\(item.name)"] = $0 }
                         )
                     )
                     Divider()
