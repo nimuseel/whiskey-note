@@ -49,7 +49,7 @@ struct NoteDetailView: View {
                         .foregroundStyle(AppColors.textSecondary)
                     Divider()
 
-                    flavorModeChipset
+                    flavorModeSegment
                     flavorSections
 
                     if !note.memo.isEmpty {
@@ -122,35 +122,21 @@ struct NoteDetailView: View {
         }
     }
 
-    // MARK: - Flavor Mode Chipset
+    // MARK: - Flavor Mode Segment
 
-    private var flavorModeChipset: some View {
-        HStack(spacing: 8) {
-            ForEach(FlavorDisplayMode.allCases, id: \.self) { mode in
-                Button {
-                    withAnimation(.easeInOut(duration: 0.2)) { flavorMode = mode }
-                } label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: mode.icon)
-                            .font(.system(size: 12))
-                        Text(mode.label)
-                            .font(.subheadline)
-                    }
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 7)
-                    .background(
-                        flavorMode == mode
-                            ? AppColors.accent
-                            : AppColors.tagBackground
-                    )
-                    .foregroundStyle(
-                        flavorMode == mode
-                            ? Color.white
-                            : AppColors.accent
-                    )
-                    .clipShape(Capsule())
+    private var flavorModeSegment: some View {
+        HStack {
+            Picker("", selection: $flavorMode) {
+                ForEach(FlavorDisplayMode.allCases, id: \.self) { mode in
+                    Image(systemName: mode.icon).tag(mode)
                 }
             }
+            .pickerStyle(.segmented)
+            .frame(width: 100)
+            .onChange(of: flavorMode) { _, newMode in
+                savedFlavorMode = newMode.rawValue
+            }
+            Spacer()
         }
     }
 
