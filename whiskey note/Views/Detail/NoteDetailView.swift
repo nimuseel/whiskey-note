@@ -6,8 +6,12 @@ struct NoteDetailView: View {
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("flavorDisplayMode") private var savedFlavorMode: String = FlavorDisplayMode.chart.rawValue
     @State private var showDeleteAlert = false
     @State private var showWizard = false
+    @State private var flavorMode: FlavorDisplayMode = .chart
+
+    // savedFlavorMode → flavorMode 초기화는 onAppear에서 처리
 
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -22,10 +26,11 @@ struct NoteDetailView: View {
         return f
     }()
 
+    // MARK: - Body
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // 사진
                 if let data = note.photoData, let uiImage = UIImage(data: data) {
                     Image(uiImage: uiImage)
                         .resizable()
@@ -43,6 +48,8 @@ struct NoteDetailView: View {
                         .font(.caption)
                         .foregroundStyle(AppColors.textSecondary)
                     Divider()
+
+                    flavorModeSegment
                     flavorSections
 
                     if !note.memo.isEmpty {
@@ -81,6 +88,9 @@ struct NoteDetailView: View {
                 Button("수정") { showWizard = true }
             }
         }
+        .onAppear {
+            flavorMode = FlavorDisplayMode(rawValue: savedFlavorMode) ?? .chart
+        }
         .fullScreenCover(isPresented: $showWizard) {
             NoteWizardView(existingNote: note)
         }
@@ -93,11 +103,10 @@ struct NoteDetailView: View {
         }
     }
 
+    // MARK: - Basic Info
+
     private var basicInfoSection: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(note.name)
-                .font(.title2.bold())
-                .foregroundStyle(AppColors.textPrimary)
             HStack(spacing: 4) {
                 Text(WhiskeyCategory(rawValue: note.category)?.localizedName ?? note.category)
                 if let age = note.age { Text("· \(age)\(String(localized: "년"))") }
@@ -113,6 +122,26 @@ struct NoteDetailView: View {
         }
     }
 
+    // MARK: - Flavor Mode Segment
+
+    private var flavorModeSegment: some View {
+        HStack {
+            Picker("", selection: $flavorMode) {
+                ForEach(FlavorDisplayMode.allCases, id: \.self) { mode in
+                    Image(systemName: mode.icon).tag(mode)
+                }
+            }
+            .pickerStyle(.segmented)
+            .frame(width: 100)
+            .onChange(of: flavorMode) { _, newMode in
+                savedFlavorMode = newMode.rawValue
+            }
+            Spacer()
+        }
+    }
+
+    // MARK: - Flavor Sections
+
     @ViewBuilder
     private var flavorSections: some View {
         let sections: [(title: String, type: FlavorType)] = [
@@ -120,36 +149,90 @@ struct NoteDetailView: View {
             ("질감 (Mouthfeel)", .mouthfeel), ("마무리 (Finish)", .finish)
         ]
         ForEach(sections, id: \.title) { section in
-            let items = note.flavorIntensities
-                .filter { $0.flavorType == section.type.rawValue && $0.intensity > 0 }
-                .sorted { $0.intensity > $1.intensity }
-            if !items.isEmpty {
+            let allItems = FlavorConstants.items(for: section.type)
+            let intensityMap: [String: Int] = Dictionary(
+                uniqueKeysWithValues: note.flavorIntensities
+                    .filter { $0.flavorType == section.type.rawValue }
+                    .map { ($0.name, $0.intensity) }
+            )
+            let hasAny = allItems.contains { (intensityMap[$0.name] ?? 0) > 0 }
+
+            if hasAny {
                 sectionHeader(LocalizedStringKey(section.title))
-                ForEach(items, id: \.id) { fi in
-                    if let flavorItem = FlavorConstants.all.first(where: { $0.name == fi.name }) {
+
+                switch flavorMode {
+                case .chart:
+                    let radarItems = allItems.map {
+                        FlavorRadarChart.Item(
+                            label: $0.name,
+                            emoji: $0.emoji,
+                            intensity: intensityMap[$0.name] ?? 0
+                        )
+                    }
+                    FlavorRadarChart(items: radarItems)
+                        .frame(height: 220)
+                        .padding(.vertical, 8)
+
+                case .list:
+                    let sorted = allItems
+                        .filter { (intensityMap[$0.name] ?? 0) > 0 }
+                        .sorted { (intensityMap[$0.name] ?? 0) > (intensityMap[$1.name] ?? 0) }
+                    ForEach(sorted, id: \.name) { item in
                         HStack {
-                            Text("\(flavorItem.emoji) \(NSLocalizedString(fi.name, comment: ""))")
+                            Text("\(item.emoji) \(NSLocalizedString(item.name, comment: ""))")
                                 .font(.subheadline)
                                 .foregroundStyle(AppColors.textPrimary)
                             Spacer()
                             HStack(spacing: 3) {
                                 ForEach(1...5, id: \.self) { i in
                                     Circle()
-                                        .fill(i <= fi.intensity ? AppColors.accent : AppColors.tagBackground)
+                                        .fill(i <= (intensityMap[item.name] ?? 0)
+                                              ? AppColors.accent
+                                              : AppColors.tagBackground)
                                         .frame(width: 8, height: 8)
                                 }
                             }
                         }
                     }
                 }
+
                 Divider()
             }
         }
     }
 
+    // MARK: - Helpers
+
     private func sectionHeader(_ title: LocalizedStringKey) -> some View {
         Text(title)
             .font(.headline)
             .foregroundStyle(AppColors.accent)
+    }
+}
+
+// MARK: - FlavorDisplayMode
+
+enum FlavorDisplayMode: String, CaseIterable {
+    case chart, list
+
+    var label: String {
+        switch self {
+        case .chart: String(localized: "차트")
+        case .list:  String(localized: "목록")
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .chart: String(localized: "레이더 차트로 플레이버 분포를 한눈에 확인")
+        case .list:  String(localized: "항목별 강도를 도트로 상세하게 확인")
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .chart: "chart.xyaxis.line"
+        case .list:  "list.bullet"
+        }
     }
 }
