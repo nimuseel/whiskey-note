@@ -8,6 +8,7 @@ struct NoteDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showDeleteAlert = false
     @State private var showWizard = false
+    @State private var flavorMode: FlavorDisplayMode = .chart
 
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -22,10 +23,11 @@ struct NoteDetailView: View {
         return f
     }()
 
+    // MARK: - Body
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
-                // 사진
                 if let data = note.photoData, let uiImage = UIImage(data: data) {
                     Image(uiImage: uiImage)
                         .resizable()
@@ -43,6 +45,8 @@ struct NoteDetailView: View {
                         .font(.caption)
                         .foregroundStyle(AppColors.textSecondary)
                     Divider()
+
+                    flavorModeChipset
                     flavorSections
 
                     if !note.memo.isEmpty {
@@ -93,11 +97,10 @@ struct NoteDetailView: View {
         }
     }
 
+    // MARK: - Basic Info
+
     private var basicInfoSection: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(note.name)
-                .font(.title2.bold())
-                .foregroundStyle(AppColors.textPrimary)
             HStack(spacing: 4) {
                 Text(WhiskeyCategory(rawValue: note.category)?.localizedName ?? note.category)
                 if let age = note.age { Text("· \(age)\(String(localized: "년"))") }
@@ -112,6 +115,40 @@ struct NoteDetailView: View {
             .foregroundStyle(AppColors.accent)
         }
     }
+
+    // MARK: - Flavor Mode Chipset
+
+    private var flavorModeChipset: some View {
+        HStack(spacing: 8) {
+            ForEach(FlavorDisplayMode.allCases, id: \.self) { mode in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) { flavorMode = mode }
+                } label: {
+                    HStack(spacing: 4) {
+                        Image(systemName: mode.icon)
+                            .font(.system(size: 12))
+                        Text(mode.label)
+                            .font(.subheadline)
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 7)
+                    .background(
+                        flavorMode == mode
+                            ? AppColors.accent
+                            : AppColors.tagBackground
+                    )
+                    .foregroundStyle(
+                        flavorMode == mode
+                            ? Color.white
+                            : AppColors.accent
+                    )
+                    .clipShape(Capsule())
+                }
+            }
+        }
+    }
+
+    // MARK: - Flavor Sections
 
     @ViewBuilder
     private var flavorSections: some View {
@@ -131,26 +168,72 @@ struct NoteDetailView: View {
             if hasAny {
                 sectionHeader(LocalizedStringKey(section.title))
 
-                // 레이더 차트
-                let radarItems = allItems.map {
-                    FlavorRadarChart.Item(
-                        label: $0.name,
-                        emoji: $0.emoji,
-                        intensity: intensityMap[$0.name] ?? 0
-                    )
+                switch flavorMode {
+                case .chart:
+                    let radarItems = allItems.map {
+                        FlavorRadarChart.Item(
+                            label: $0.name,
+                            emoji: $0.emoji,
+                            intensity: intensityMap[$0.name] ?? 0
+                        )
+                    }
+                    FlavorRadarChart(items: radarItems)
+                        .frame(height: 220)
+                        .padding(.vertical, 8)
+
+                case .list:
+                    let sorted = allItems
+                        .filter { (intensityMap[$0.name] ?? 0) > 0 }
+                        .sorted { (intensityMap[$0.name] ?? 0) > (intensityMap[$1.name] ?? 0) }
+                    ForEach(sorted, id: \.name) { item in
+                        HStack {
+                            Text("\(item.emoji) \(NSLocalizedString(item.name, comment: ""))")
+                                .font(.subheadline)
+                                .foregroundStyle(AppColors.textPrimary)
+                            Spacer()
+                            HStack(spacing: 3) {
+                                ForEach(1...5, id: \.self) { i in
+                                    Circle()
+                                        .fill(i <= (intensityMap[item.name] ?? 0)
+                                              ? AppColors.accent
+                                              : AppColors.tagBackground)
+                                        .frame(width: 8, height: 8)
+                                }
+                            }
+                        }
+                    }
                 }
-                FlavorRadarChart(items: radarItems)
-                    .frame(height: 220)
-                    .padding(.vertical, 8)
 
                 Divider()
             }
         }
     }
 
+    // MARK: - Helpers
+
     private func sectionHeader(_ title: LocalizedStringKey) -> some View {
         Text(title)
             .font(.headline)
             .foregroundStyle(AppColors.accent)
+    }
+}
+
+// MARK: - FlavorDisplayMode
+
+enum FlavorDisplayMode: CaseIterable {
+    case chart, list
+
+    var label: String {
+        switch self {
+        case .chart: String(localized: "차트")
+        case .list:  String(localized: "목록")
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .chart: "chart.xyaxis.line"
+        case .list:  "list.bullet"
+        }
     }
 }
