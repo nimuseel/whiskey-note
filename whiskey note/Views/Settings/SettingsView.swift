@@ -40,10 +40,8 @@ struct SettingsView: View {
                             }
                             if selectedMode == mode {
                                 previewFor(mode)
-                                    .transition(.opacity.combined(with: .move(edge: .top)))
                             }
                         }
-                        .animation(.easeInOut(duration: 0.25), value: selectedMode)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             selectedMode = mode
