@@ -11,6 +11,9 @@ struct ContentView: View {
 
             StatsView()
                 .tabItem { Label("통계", systemImage: "chart.bar.fill") }
+
+            SettingsView()
+                .tabItem { Label("설정", systemImage: "gearshape.fill") }
         }
         .tint(AppColors.accent)
     }
