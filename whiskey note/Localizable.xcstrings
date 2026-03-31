@@ -154,6 +154,27 @@
         }
       }
     },
+    "기록" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notes"
+          }
+        }
+      }
+    },
+    "긴" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long"
+          }
+        }
+      }
+    },
     "기록이 쌓이면 통계가 표시됩니다." : {
       "localizations" : {
         "en" : {
@@ -170,27 +191,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Other"
-          }
-        }
-      }
-    },
-    "긴" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Long"
-          }
-        }
-      }
-    },
-    "기록" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Notes"
           }
         }
       }
@@ -278,7 +278,14 @@
       }
     },
     "데이터를 불러오고 있습니다" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading your data..."
+          }
+        }
+      }
     },
     "도수 (%)" : {
       "localizations" : {
@@ -308,6 +315,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Warm"
+          }
+        }
+      }
+    },
+    "레이더 차트로 플레이버 분포를 한눈에 확인" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See the flavor distribution at a glance on a radar chart"
           }
         }
       }
@@ -355,7 +372,14 @@
       }
     },
     "목록" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List"
+          }
+        }
+      }
     },
     "무거움" : {
       "extractionState" : "stale",
@@ -455,6 +479,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Top 5 Aromas"
+          }
+        }
+      }
+    },
+    "설정" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Settings"
           }
         }
       }
@@ -780,7 +814,14 @@
       }
     },
     "차트" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chart"
+          }
+        }
+      }
     },
     "총평" : {
       "localizations" : {
@@ -873,6 +914,16 @@
         }
       }
     },
+    "플레이버 기본 표시 방식" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default Flavor Display"
+          }
+        }
+      }
+    },
     "피트" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -880,6 +931,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Peaty"
+          }
+        }
+      }
+    },
+    "항목별 강도를 도트로 상세하게 확인" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View each item's intensity in detail with dots"
           }
         }
       }

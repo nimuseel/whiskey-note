@@ -6,9 +6,12 @@ struct NoteDetailView: View {
 
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("flavorDisplayMode") private var savedFlavorMode: String = FlavorDisplayMode.chart.rawValue
     @State private var showDeleteAlert = false
     @State private var showWizard = false
     @State private var flavorMode: FlavorDisplayMode = .chart
+
+    // savedFlavorMode → flavorMode 초기화는 onAppear에서 처리
 
     private static let dateFormatter: DateFormatter = {
         let f = DateFormatter()
@@ -84,6 +87,9 @@ struct NoteDetailView: View {
             ToolbarItem(placement: .primaryAction) {
                 Button("수정") { showWizard = true }
             }
+        }
+        .onAppear {
+            flavorMode = FlavorDisplayMode(rawValue: savedFlavorMode) ?? .chart
         }
         .fullScreenCover(isPresented: $showWizard) {
             NoteWizardView(existingNote: note)
@@ -220,13 +226,20 @@ struct NoteDetailView: View {
 
 // MARK: - FlavorDisplayMode
 
-enum FlavorDisplayMode: CaseIterable {
+enum FlavorDisplayMode: String, CaseIterable {
     case chart, list
 
     var label: String {
         switch self {
         case .chart: String(localized: "차트")
         case .list:  String(localized: "목록")
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .chart: String(localized: "레이더 차트로 플레이버 분포를 한눈에 확인")
+        case .list:  String(localized: "항목별 강도를 도트로 상세하게 확인")
         }
     }
 
