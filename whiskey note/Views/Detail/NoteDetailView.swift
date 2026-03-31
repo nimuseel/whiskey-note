@@ -120,28 +120,29 @@ struct NoteDetailView: View {
             ("질감 (Mouthfeel)", .mouthfeel), ("마무리 (Finish)", .finish)
         ]
         ForEach(sections, id: \.title) { section in
-            let items = note.flavorIntensities
-                .filter { $0.flavorType == section.type.rawValue && $0.intensity > 0 }
-                .sorted { $0.intensity > $1.intensity }
-            if !items.isEmpty {
+            let allItems = FlavorConstants.items(for: section.type)
+            let intensityMap: [String: Int] = Dictionary(
+                uniqueKeysWithValues: note.flavorIntensities
+                    .filter { $0.flavorType == section.type.rawValue }
+                    .map { ($0.name, $0.intensity) }
+            )
+            let hasAny = allItems.contains { (intensityMap[$0.name] ?? 0) > 0 }
+
+            if hasAny {
                 sectionHeader(LocalizedStringKey(section.title))
-                ForEach(items, id: \.id) { fi in
-                    if let flavorItem = FlavorConstants.all.first(where: { $0.name == fi.name }) {
-                        HStack {
-                            Text("\(flavorItem.emoji) \(NSLocalizedString(fi.name, comment: ""))")
-                                .font(.subheadline)
-                                .foregroundStyle(AppColors.textPrimary)
-                            Spacer()
-                            HStack(spacing: 3) {
-                                ForEach(1...5, id: \.self) { i in
-                                    Circle()
-                                        .fill(i <= fi.intensity ? AppColors.accent : AppColors.tagBackground)
-                                        .frame(width: 8, height: 8)
-                                }
-                            }
-                        }
-                    }
+
+                // 레이더 차트
+                let radarItems = allItems.map {
+                    FlavorRadarChart.Item(
+                        label: $0.name,
+                        emoji: $0.emoji,
+                        intensity: intensityMap[$0.name] ?? 0
+                    )
                 }
+                FlavorRadarChart(items: radarItems)
+                    .frame(height: 220)
+                    .padding(.vertical, 8)
+
                 Divider()
             }
         }
