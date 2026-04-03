@@ -10,6 +10,11 @@ struct NoteDetailView: View {
     @State private var showDeleteAlert = false
     @State private var showWizard = false
     @State private var flavorMode: FlavorDisplayMode = .chart
+    @State private var isGeneratingCard = false
+    @State private var showShareCardError = false
+
+    @Query(sort: \WhiskeyNote.createdAt)
+    private var allNotes: [WhiskeyNote]
 
     // savedFlavorMode → flavorMode 초기화는 onAppear에서 처리
 
@@ -84,8 +89,17 @@ struct NoteDetailView: View {
         .navigationTitle(note.name)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    Task { await generateAndShareCard() }
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                }
+                .disabled(isGeneratingCard)
+                .accessibilityLabel(String(localized: "테이스팅 노트 공유"))
+            }
             ToolbarItem(placement: .primaryAction) {
-                Button("수정") { showWizard = true }
+                Button(String(localized: "수정")) { showWizard = true }
             }
         }
         .onAppear {
@@ -93,6 +107,21 @@ struct NoteDetailView: View {
         }
         .fullScreenCover(isPresented: $showWizard) {
             NoteWizardView(existingNote: note)
+        }
+        .overlay {
+            if isGeneratingCard {
+                Color.black.opacity(0.35)
+                    .ignoresSafeArea()
+                    .overlay {
+                        ProgressView()
+                            .tint(.white)
+                    }
+            }
+        }
+        .alert(String(localized: "카드 생성에 실패했어요."), isPresented: $showShareCardError) {
+            Button(String(localized: "확인"), role: .cancel) {}
+        } message: {
+            Text(String(localized: "다시 시도해주세요."))
         }
         .alert("정말 삭제할까요?", isPresented: $showDeleteAlert) {
             Button("삭제", role: .destructive) {
@@ -202,6 +231,32 @@ struct NoteDetailView: View {
     }
 
     // MARK: - Helpers
+
+    // MARK: - Share Card
+
+    @MainActor
+    private func generateAndShareCard() async {
+        isGeneratingCard = true
+        defer { isGeneratingCard = false }
+
+        guard let image = ShareCardRenderer.render(note: note, allNotes: allNotes) else {
+            showShareCardError = true
+            return
+        }
+
+        let av = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+        // 이 앱은 iPhone 전용이므로 popoverPresentationController 설정 불필요
+
+        guard
+            let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+            let window = scene.windows.first(where: \.isKeyWindow),
+            let rootVC = window.rootViewController
+        else { return }
+
+        var topVC = rootVC
+        while let presented = topVC.presentedViewController { topVC = presented }
+        topVC.present(av, animated: true)
+    }
 
     private func sectionHeader(_ title: LocalizedStringKey) -> some View {
         Text(title)
