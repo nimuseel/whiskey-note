@@ -28,6 +28,20 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "742E36482D59D4B0001B11E1"
+               BuildableName = "whiskey-noteTests.xctest"
+               BlueprintName = "whiskey-noteTests"
+               ReferencedContainer = "container:whiskey-note.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "742E36522D59D4B0001B11E1"
                BuildableName = "whiskey-noteUITests.xctest"
                BlueprintName = "whiskey-noteUITests"
@@ -51,6 +65,16 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "742E36482D59D4B0001B11E1"
+               BuildableName = "whiskey-noteTests.xctest"
+               BlueprintName = "whiskey-noteTests"
+               ReferencedContainer = "container:whiskey-note.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
          <TestableReference
             skipped = "NO">
             <BuildableReference
