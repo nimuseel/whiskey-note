@@ -159,3 +159,142 @@ struct StatsCalculationsTests {
         #expect(result.isEmpty)
     }
 }
+
+// MARK: - ShareCardHelper Tests
+
+@Suite("ShareCardHelper")
+struct ShareCardHelperTests {
+
+    // MARK: tastingNumber
+
+    @Test func tastingNumberIsOneBased() {
+        let note = makeNote(createdAt: Date(timeIntervalSince1970: 100))
+        #expect(ShareCardHelper.tastingNumber(for: note, in: [note]) == 1)
+    }
+
+    @Test func tastingNumberFallsBackToOneWhenNotInList() {
+        let note = makeNote(createdAt: Date(timeIntervalSince1970: 100))
+        let other = makeNote(createdAt: Date(timeIntervalSince1970: 200))
+        #expect(ShareCardHelper.tastingNumber(for: note, in: [other]) == 1)
+    }
+
+    @Test func tastingNumberReflectsOrder() {
+        let note1 = makeNote(createdAt: Date(timeIntervalSince1970: 100))
+        let note2 = makeNote(createdAt: Date(timeIntervalSince1970: 200))
+        #expect(ShareCardHelper.tastingNumber(for: note2, in: [note2, note1]) == 2)
+    }
+
+    @Test func tastingNumberTiebreakById() {
+        let date = Date(timeIntervalSince1970: 100)
+        let noteA = makeNote(createdAt: date)
+        let noteB = makeNote(createdAt: date)
+        let all = [noteA, noteB].sorted { $0.id.uuidString < $1.id.uuidString }
+        #expect(ShareCardHelper.tastingNumber(for: all[0], in: [noteA, noteB]) == 1)
+        #expect(ShareCardHelper.tastingNumber(for: all[1], in: [noteA, noteB]) == 2)
+    }
+
+    // MARK: topAromaItems
+
+    @Test func topAromaItemsReturnsUpToLimit() {
+        let note = makeNote(aromaIntensities: ["과일": 5, "꽃": 4, "곡물": 3, "견과류": 2])
+        let result = ShareCardHelper.topAromaItems(from: note, limit: 3)
+        #expect(result.count == 3)
+    }
+
+    @Test func topAromaItemsAreSortedByIntensityDescending() {
+        let note = makeNote(aromaIntensities: ["과일": 3, "꽃": 5, "곡물": 1])
+        let result = ShareCardHelper.topAromaItems(from: note, limit: 3)
+        #expect(result[0].item.name == "꽃")
+        #expect(result[1].item.name == "과일")
+        #expect(result[2].item.name == "곡물")
+    }
+
+    @Test func topAromaItemsTiebreakFollowsFlavorConstantsOrder() {
+        let note = makeNote(aromaIntensities: ["꽃": 3, "과일": 3])
+        let result = ShareCardHelper.topAromaItems(from: note, limit: 2)
+        #expect(result[0].item.name == "과일")
+        #expect(result[1].item.name == "꽃")
+    }
+
+    @Test func topAromaItemsExcludesZeroIntensity() {
+        let note = makeNote(aromaIntensities: ["과일": 0, "꽃": 3])
+        let result = ShareCardHelper.topAromaItems(from: note, limit: 3)
+        #expect(result.count == 1)
+        #expect(result[0].item.name == "꽃")
+    }
+
+    // MARK: radarAxisValues
+
+    @Test func radarAxisValuesHasFourElements() {
+        let note = makeNote()
+        #expect(ShareCardHelper.radarAxisValues(from: note).count == 4)
+    }
+
+    @Test func radarAxisValuesAveragesIntensities() {
+        let note = makeNote(aromaIntensities: ["과일": 2, "꽃": 4])
+        let values = ShareCardHelper.radarAxisValues(from: note)
+        #expect(abs(values[0] - 3.0) < 0.001)
+    }
+
+    @Test func radarAxisValuesExcludesZero() {
+        let note = makeNote(aromaIntensities: ["과일": 4, "꽃": 0])
+        let values = ShareCardHelper.radarAxisValues(from: note)
+        #expect(abs(values[0] - 4.0) < 0.001)
+    }
+
+    @Test func radarAxisValuesZeroForEmptyType() {
+        let note = makeNote()
+        let values = ShareCardHelper.radarAxisValues(from: note)
+        #expect(values.allSatisfy { $0 == 0.0 })
+    }
+
+    @Test func radarAxisValuesTasteAxisAveragesCorrectly() {
+        let note = makeNote(intensities: [(.taste, "단맛", 3), (.taste, "짠맛", 5)])
+        let values = ShareCardHelper.radarAxisValues(from: note)
+        #expect(abs(values[1] - 4.0) < 0.001)
+    }
+
+    @Test func radarAxisValuesEachAxisIndependent() {
+        let note = makeNote(intensities: [(.aroma, "과일", 4), (.taste, "단맛", 2)])
+        let values = ShareCardHelper.radarAxisValues(from: note)
+        #expect(abs(values[0] - 4.0) < 0.001)
+        #expect(abs(values[1] - 2.0) < 0.001)
+        #expect(values[2] == 0.0)
+        #expect(values[3] == 0.0)
+    }
+
+    // MARK: hasAnyFlavor
+
+    @Test func hasAnyFlavorFalseWhenAllZero() {
+        let note = makeNote(aromaIntensities: ["과일": 0])
+        #expect(!ShareCardHelper.hasAnyFlavor(from: note))
+    }
+
+    @Test func hasAnyFlavorTrueWhenAnyPositive() {
+        let note = makeNote(aromaIntensities: ["과일": 3])
+        #expect(ShareCardHelper.hasAnyFlavor(from: note))
+    }
+
+    // MARK: - Helpers
+
+    private func makeNote(
+        createdAt: Date = Date(),
+        aromaIntensities: [String: Int] = [:],
+        intensities: [(FlavorType, String, Int)] = []
+    ) -> WhiskeyNote {
+        let note = WhiskeyNote(name: "Test")
+        note.createdAt = createdAt
+        let aromaItems = aromaIntensities.map { name, intensity -> FlavorIntensity in
+            let fi = FlavorIntensity(flavorType: .aroma, name: name, intensity: intensity)
+            fi.note = note
+            return fi
+        }
+        let otherItems = intensities.map { type, name, intensity -> FlavorIntensity in
+            let fi = FlavorIntensity(flavorType: type, name: name, intensity: intensity)
+            fi.note = note
+            return fi
+        }
+        note.flavorIntensities = aromaItems + otherItems
+        return note
+    }
+}
