@@ -12,6 +12,9 @@ struct ContentView: View {
             StatsView()
                 .tabItem { Label("통계", systemImage: "chart.bar.fill") }
 
+            CabinetView()
+                .tabItem { Label(String(localized: "술장"), systemImage: "wineglass") }
+
             SettingsView()
                 .tabItem { Label("설정", systemImage: "gearshape.fill") }
         }
