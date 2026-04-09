@@ -7,23 +7,23 @@ enum BottleDesign {
     // MARK: Layout constants
     enum Layout {
         // Body heights by age tier
-        static let heightNAS: CGFloat      = 56   // no age statement
-        static let heightYoung: CGFloat    = 60   // 1–12y
-        static let heightMature: CGFloat   = 68   // 13–18y
-        static let heightOld: CGFloat      = 76   // 19y+
+        static let heightNAS: CGFloat      = 84    // no age statement
+        static let heightYoung: CGFloat    = 96    // 1–12y
+        static let heightMature: CGFloat   = 108   // 13–18y
+        static let heightOld: CGFloat      = 120   // 19y+
 
         // Body widths by category
-        static let widthWide: CGFloat      = 20   // bourbon
-        static let widthStandard: CGFloat  = 18   // single malt
-        static let widthNarrow: CGFloat    = 17   // blended / irish / other
-        static let widthSlim: CGFloat      = 16   // japanese
+        static let widthWide: CGFloat      = 30    // bourbon
+        static let widthStandard: CGFloat  = 27    // single malt
+        static let widthNarrow: CGFloat    = 25    // blended / irish / other
+        static let widthSlim: CGFloat      = 22    // japanese
 
         // Proportional ratios (relative to bodyWidth / bodyHeight)
         static let capWidthRatio: CGFloat      = 0.48
-        static let capHeight: CGFloat          = 5
+        static let capHeight: CGFloat          = 7
         static let neckWidthRatio: CGFloat     = 0.45
         static let neckHeightRatio: CGFloat    = 0.18
-        static let bodyCornerRadius: CGFloat   = 3
+        static let bodyCornerRadius: CGFloat   = 4
         static let capCornerRadius: CGFloat    = 2
         static let highlightStripeWidth: CGFloat = 2
 
@@ -34,9 +34,9 @@ enum BottleDesign {
         static let labelOffsetYRatio: CGFloat  = 0.30
 
         // Name label
-        static let nameFontSize: CGFloat   = 7
-        static let nameLabelWidth: CGFloat = 36
-        static let nameLabelTopPadding: CGFloat = 3
+        static let nameFontSize: CGFloat   = 9
+        static let nameLabelWidth: CGFloat = 48
+        static let nameLabelTopPadding: CGFloat = 4
     }
 
     // MARK: Glow thresholds
@@ -61,8 +61,10 @@ enum BottleDesign {
         static let highlight: Double    = 0.08
         static let labelFill: Double    = 0.07
         static let labelStroke: Double  = 0.10
-        static let nameForeground: Double = 0.45
     }
+
+    // MARK: Name label color (warm cream, readable on dark wood)
+    static let nameColor: Color = Color(red: 0.88, green: 0.78, blue: 0.60)
 
     // MARK: Colors
     struct Colors {
@@ -190,8 +192,8 @@ struct BottleView: View {
 
             // Name label
             Text(displayName)
-                .font(.system(size: BottleDesign.Layout.nameFontSize))
-                .foregroundStyle(Color.white.opacity(BottleDesign.Surface.nameForeground))
+                .font(.system(size: BottleDesign.Layout.nameFontSize, weight: .medium))
+                .foregroundStyle(BottleDesign.nameColor)
                 .frame(width: BottleDesign.Layout.nameLabelWidth)
                 .lineLimit(1)
                 .truncationMode(.tail)

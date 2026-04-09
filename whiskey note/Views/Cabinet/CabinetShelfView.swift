@@ -15,7 +15,7 @@ struct CabinetShelfView: View {
                 }
                 Spacer()
             }
-            .frame(height: 96)
+            .frame(height: 152)
             .padding(.horizontal, 8)
 
             // Shelf board
