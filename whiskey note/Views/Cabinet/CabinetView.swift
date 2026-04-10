@@ -1,19 +1,6 @@
 import SwiftUI
 import SwiftData
 
-// Targets only this NavigationStack's navigationBar — no global side effects
-private struct WhiteTitleConfigurator: UIViewControllerRepresentable {
-    func makeUIViewController(context: Context) -> UIViewController { UIViewController() }
-    func updateUIViewController(_ vc: UIViewController, context: Context) {
-        guard let nc = vc.navigationController else { return }
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithTransparentBackground()
-        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
-        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
-        nc.navigationBar.standardAppearance = appearance
-        nc.navigationBar.scrollEdgeAppearance = appearance
-    }
-}
 
 struct CabinetView: View {
     @Query(sort: \WhiskeyNote.createdAt) private var notes: [WhiskeyNote]
@@ -50,23 +37,33 @@ struct CabinetView: View {
                 .frame(maxHeight: 300)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
-                if notes.isEmpty {
-                    emptyState
-                } else {
-                    ScrollView {
-                        VStack(spacing: 12) {
-                            ForEach(Array(shelves.enumerated()), id: \.offset) { _, shelf in
-                                CabinetShelfView(notes: shelf)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        // Custom white large title
+                        Text(String(localized: "술장"))
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.top, 8)
+                            .padding(.bottom, 16)
+
+                        if notes.isEmpty {
+                            emptyState
+                                .frame(maxWidth: .infinity)
+                                .padding(.top, 80)
+                        } else {
+                            VStack(spacing: 12) {
+                                ForEach(Array(shelves.enumerated()), id: \.offset) { _, shelf in
+                                    CabinetShelfView(notes: shelf)
+                                }
                             }
+                            .padding(.bottom, 40)
                         }
-                        .padding(.top, 20)
-                        .padding(.bottom, 40)
                     }
                 }
             }
-            .navigationTitle(String(localized: "술장"))
-            .navigationBarTitleDisplayMode(.large)
-            .background(WhiteTitleConfigurator())
+            .navigationBarHidden(true)
             .navigationDestination(for: WhiskeyNote.self) { note in
                 NoteDetailView(note: note)
             }
