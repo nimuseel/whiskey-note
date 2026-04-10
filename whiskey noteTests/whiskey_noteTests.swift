@@ -298,3 +298,73 @@ struct ShareCardHelperTests {
         return note
     }
 }
+
+// MARK: - BottleDesign Tests
+
+@Suite("BottleDesign")
+struct BottleDesignTests {
+
+    // bodyHeight — boundary tests for each age tier
+    @Test func bodyHeightNilAge() {
+        #expect(BottleDesign.bodyHeight(age: nil) == BottleDesign.Layout.heightNAS)
+    }
+    @Test func bodyHeightAge10() {
+        #expect(BottleDesign.bodyHeight(age: 10) == BottleDesign.Layout.heightYoung)
+    }
+    @Test func bodyHeightAge12() {
+        // upper boundary of young tier
+        #expect(BottleDesign.bodyHeight(age: 12) == BottleDesign.Layout.heightYoung)
+    }
+    @Test func bodyHeightAge13() {
+        // lower boundary of mature tier
+        #expect(BottleDesign.bodyHeight(age: 13) == BottleDesign.Layout.heightMature)
+    }
+    @Test func bodyHeightAge18() {
+        // upper boundary of mature tier
+        #expect(BottleDesign.bodyHeight(age: 18) == BottleDesign.Layout.heightMature)
+    }
+    @Test func bodyHeightAge19() {
+        // lower boundary of old tier
+        #expect(BottleDesign.bodyHeight(age: 19) == BottleDesign.Layout.heightOld)
+    }
+    @Test func bodyHeightAge30() {
+        #expect(BottleDesign.bodyHeight(age: 30) == BottleDesign.Layout.heightOld)
+    }
+
+    // bodyWidth — one test per distinct width value
+    @Test func bodyWidthBourbon() {
+        #expect(BottleDesign.bodyWidth(for: .bourbon) == BottleDesign.Layout.widthWide)
+    }
+    @Test func bodyWidthSingleMalt() {
+        #expect(BottleDesign.bodyWidth(for: .singleMalt) == BottleDesign.Layout.widthStandard)
+    }
+    @Test func bodyWidthJapanese() {
+        #expect(BottleDesign.bodyWidth(for: .japanese) == BottleDesign.Layout.widthSlim)
+    }
+    @Test func bodyWidthOther() {
+        #expect(BottleDesign.bodyWidth(for: .other) == BottleDesign.Layout.widthNarrow)
+    }
+
+    // glowOpacity — boundary tests for each tier
+    @Test func glowOpacityNoRating() {
+        #expect(BottleDesign.glowOpacity(rating: 0) == BottleDesign.GlowOpacity.none)
+    }
+    @Test func glowOpacityBelow4() {
+        #expect(BottleDesign.glowOpacity(rating: 3.5) == BottleDesign.GlowOpacity.none)
+    }
+    @Test func glowOpacityAt4() {
+        // lower boundary of subtle tier
+        #expect(BottleDesign.glowOpacity(rating: 4.0) == BottleDesign.GlowOpacity.subtle)
+    }
+    @Test func glowOpacityAt4_4() {
+        // upper boundary of subtle tier
+        #expect(BottleDesign.glowOpacity(rating: 4.4) == BottleDesign.GlowOpacity.subtle)
+    }
+    @Test func glowOpacityAt4_5() {
+        // lower boundary of strong tier
+        #expect(BottleDesign.glowOpacity(rating: 4.5) == BottleDesign.GlowOpacity.strong)
+    }
+    @Test func glowOpacityAt5() {
+        #expect(BottleDesign.glowOpacity(rating: 5.0) == BottleDesign.GlowOpacity.strong)
+    }
+}

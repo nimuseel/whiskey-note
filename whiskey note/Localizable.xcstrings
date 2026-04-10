@@ -1030,6 +1030,26 @@
         }
       }
     },
+    "술장" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cabinet"
+          }
+        }
+      }
+    },
+    "첫 위스키를 기록해보세요" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Record your first whiskey"
+          }
+        }
+      }
+    },
     "확인" : {
       "localizations" : {
         "en" : {
