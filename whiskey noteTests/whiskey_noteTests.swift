@@ -373,11 +373,11 @@ struct BottleDesignTests {
 
 @Suite("WhiskeyNameSuggestions")
 struct WhiskeyNameSuggestionsTests {
-    let names = ["Laphroaig 10yr", "Macallan 12", "Laphroaig 10yr", "Balvenie 14"]
+    let names = ["Laphroaig 10yr", "Macallan 12", "Balvenie 14"]
 
     @Test func caseInsensitiveMatch() {
         let result = filterSuggestions("lap", from: names)
-        #expect(result.contains("Laphroaig 10yr"))
+        #expect(result == ["Laphroaig 10yr"])
     }
 
     @Test func noMatchReturnsEmpty() {
