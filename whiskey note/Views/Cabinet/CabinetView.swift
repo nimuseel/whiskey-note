@@ -1,6 +1,20 @@
 import SwiftUI
 import SwiftData
 
+// Targets only this NavigationStack's navigationBar — no global side effects
+private struct WhiteTitleConfigurator: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UIViewController { UIViewController() }
+    func updateUIViewController(_ vc: UIViewController, context: Context) {
+        guard let nc = vc.navigationController else { return }
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+        appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+        nc.navigationBar.standardAppearance = appearance
+        nc.navigationBar.scrollEdgeAppearance = appearance
+    }
+}
+
 struct CabinetView: View {
     @Query(sort: \WhiskeyNote.createdAt) private var notes: [WhiskeyNote]
 
@@ -52,7 +66,7 @@ struct CabinetView: View {
             }
             .navigationTitle(String(localized: "술장"))
             .navigationBarTitleDisplayMode(.large)
-            .toolbarColorScheme(.dark, for: .navigationBar)
+            .background(WhiteTitleConfigurator())
             .navigationDestination(for: WhiskeyNote.self) { note in
                 NoteDetailView(note: note)
             }
