@@ -9,11 +9,11 @@ struct ContentView: View {
             NoteListView()
                 .tabItem { Label("노트", systemImage: "note.text") }
 
-            StatsView()
-                .tabItem { Label("통계", systemImage: "chart.bar.fill") }
-
             CabinetView()
                 .tabItem { Label(String(localized: "술장"), systemImage: "wineglass") }
+
+            StatsView()
+                .tabItem { Label("통계", systemImage: "chart.bar.fill") }
 
             SettingsView()
                 .tabItem { Label("설정", systemImage: "gearshape.fill") }

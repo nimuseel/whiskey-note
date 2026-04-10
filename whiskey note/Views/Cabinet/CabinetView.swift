@@ -53,6 +53,20 @@ struct CabinetView: View {
             .navigationTitle(String(localized: "술장"))
             .navigationBarTitleDisplayMode(.large)
             .toolbarColorScheme(.dark, for: .navigationBar)
+            .onAppear {
+                let appearance = UINavigationBarAppearance()
+                appearance.configureWithTransparentBackground()
+                appearance.largeTitleTextAttributes = [.foregroundColor: UIColor.white]
+                appearance.titleTextAttributes = [.foregroundColor: UIColor.white]
+                UINavigationBar.appearance().standardAppearance = appearance
+                UINavigationBar.appearance().scrollEdgeAppearance = appearance
+            }
+            .onDisappear {
+                let restored = UINavigationBarAppearance()
+                restored.configureWithDefaultBackground()
+                UINavigationBar.appearance().standardAppearance = restored
+                UINavigationBar.appearance().scrollEdgeAppearance = restored
+            }
             .navigationDestination(for: WhiskeyNote.self) { note in
                 NoteDetailView(note: note)
             }
