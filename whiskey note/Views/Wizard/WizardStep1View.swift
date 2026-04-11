@@ -9,86 +9,155 @@ struct WizardStep1View: View {
     @Binding var price: String
     @Binding var selectedPhoto: PhotosPickerItem?
     @Binding var photoData: Data?
+    var existingNames: [String] = []
+
+    @FocusState private var nameFieldFocused: Bool
+    @State private var textFieldFrame: CGRect = .zero
+
+    private var suggestions: [String] {
+        guard nameFieldFocused, name.count >= 1 else { return [] }
+        return filterSuggestions(name, from: existingNames)
+    }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                // 사진 영역
-                PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                    Group {
-                        if let photoData, let uiImage = UIImage(data: photoData) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 200)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                        } else {
-                            RoundedRectangle(cornerRadius: 12)
-                                .fill(AppColors.tagBackground)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 120)
-                                .overlay {
-                                    VStack(spacing: 8) {
-                                        Image(systemName: "camera.fill")
-                                            .font(.largeTitle)
-                                            .foregroundStyle(AppColors.accent)
-                                        Text("사진 추가 (선택)")
-                                            .font(.subheadline)
-                                            .foregroundStyle(AppColors.textSecondary)
+        ZStack(alignment: .topLeading) {
+            ScrollView {
+                VStack(spacing: 16) {
+                    // 사진 영역
+                    PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                        Group {
+                            if let photoData, let uiImage = UIImage(data: photoData) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 200)
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                            } else {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(AppColors.tagBackground)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 120)
+                                    .overlay {
+                                        VStack(spacing: 8) {
+                                            Image(systemName: "camera.fill")
+                                                .font(.largeTitle)
+                                                .foregroundStyle(AppColors.accent)
+                                            Text("사진 추가 (선택)")
+                                                .font(.subheadline)
+                                                .foregroundStyle(AppColors.textSecondary)
+                                        }
                                     }
-                                }
-                        }
-                    }
-                }
-                .onChange(of: selectedPhoto) { _, newItem in
-                    Task {
-                        if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                            photoData = compressImage(data)
-                        }
-                    }
-                }
-
-                // 기본 정보 폼
-                VStack(spacing: 12) {
-                    formField(label: "위스키 이름 *") {
-                        TextField("예: Laphroaig 10yr", text: $name)
-                            .accessibilityIdentifier("nameField")
-                    }
-
-                    formField(label: "종류") {
-                        Picker("종류", selection: $category) {
-                            ForEach(WhiskeyCategory.allCases, id: \.rawValue) { cat in
-                                Text(cat.localizedName).tag(cat.rawValue)
                             }
                         }
-                        .pickerStyle(.menu)
-                        .tint(AppColors.accent)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .onChange(of: selectedPhoto) { _, newItem in
+                        Task {
+                            if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                                photoData = compressImage(data)
+                            }
+                        }
                     }
 
-                    HStack(spacing: 12) {
-                        formField(label: "도수 (%)") {
-                            TextField("예: 43.0", text: $abv)
-                                .keyboardType(.decimalPad)
-                                .accessibilityIdentifier("abvField")
+                    // 기본 정보 폼
+                    VStack(spacing: 12) {
+                        formField(label: "위스키 이름 *") {
+                            TextField("예: Laphroaig 10yr", text: $name)
+                                .accessibilityIdentifier("nameField")
+                                .focused($nameFieldFocused)
                         }
-                        formField(label: "숙성 연수") {
-                            TextField("예: 10", text: $age)
+                        .background(
+                            GeometryReader { geo in
+                                Color.clear
+                                    .onAppear {
+                                        DispatchQueue.main.async {
+                                            textFieldFrame = geo.frame(in: .named("wizardStep1"))
+                                        }
+                                    }
+                                    .onChange(of: geo.size) { _, _ in
+                                        DispatchQueue.main.async {
+                                            textFieldFrame = geo.frame(in: .named("wizardStep1"))
+                                        }
+                                    }
+                            }
+                        )
+
+                        formField(label: "종류") {
+                            Picker("종류", selection: $category) {
+                                ForEach(WhiskeyCategory.allCases, id: \.rawValue) { cat in
+                                    Text(cat.localizedName).tag(cat.rawValue)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .tint(AppColors.accent)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+
+                        HStack(spacing: 12) {
+                            formField(label: "도수 (%)") {
+                                TextField("예: 43.0", text: $abv)
+                                    .keyboardType(.decimalPad)
+                                    .accessibilityIdentifier("abvField")
+                            }
+                            formField(label: "숙성 연수") {
+                                TextField("예: 10", text: $age)
+                                    .keyboardType(.numberPad)
+                                    .accessibilityIdentifier("ageField")
+                            }
+                        }
+
+                        formField(label: "가격 (원)") {
+                            TextField("예: 80000", text: $price)
                                 .keyboardType(.numberPad)
-                                .accessibilityIdentifier("ageField")
+                                .accessibilityIdentifier("priceField")
                         }
                     }
+                }
+                .padding()
+            }
+            .coordinateSpace(name: "wizardStep1")
 
-                    formField(label: "가격 (원)") {
-                        TextField("예: 80000", text: $price)
-                            .keyboardType(.numberPad)
-                            .accessibilityIdentifier("priceField")
+            // 자동완성 드롭다운
+            if !suggestions.isEmpty {
+                suggestionsDropdown
+                    .offset(x: textFieldFrame.minX,
+                            y: textFieldFrame.maxY + 4)
+            }
+        }
+    }
+
+    // MARK: - Suggestions Dropdown
+
+    private var suggestionsDropdown: some View {
+        ScrollView {
+            VStack(spacing: 0) {
+                ForEach(Array(suggestions.enumerated()), id: \.offset) { index, suggestion in
+                    Button {
+                        name = suggestion
+                        nameFieldFocused = false
+                    } label: {
+                        Text(suggestion)
+                            .foregroundStyle(AppColors.textPrimary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 12)
+                            .frame(minHeight: 44)
+                    }
+                    if index < suggestions.count - 1 {
+                        Divider()
+                            .padding(.horizontal, 12)
                     }
                 }
             }
-            .padding()
         }
+        .frame(width: textFieldFrame.width)
+        .frame(maxHeight: 220)
+        .background(Color.white)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(AppColors.tagBackground, lineWidth: 1)
+        )
+        .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
     }
 
     @ViewBuilder
@@ -119,4 +188,3 @@ struct WizardStep1View: View {
         return resized.jpegData(compressionQuality: 0.8) ?? data
     }
 }
-
