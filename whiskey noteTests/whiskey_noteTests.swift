@@ -368,3 +368,30 @@ struct BottleDesignTests {
         #expect(BottleDesign.glowOpacity(rating: 5.0) == BottleDesign.GlowOpacity.strong)
     }
 }
+
+// MARK: - WhiskeyNameSuggestions Tests
+
+@Suite("WhiskeyNameSuggestions")
+struct WhiskeyNameSuggestionsTests {
+    let names = ["Laphroaig 10yr", "Macallan 12", "Balvenie 14"]
+
+    @Test func caseInsensitiveMatch() {
+        let result = filterSuggestions("lap", from: names)
+        #expect(result == ["Laphroaig 10yr"])
+    }
+
+    @Test func noMatchReturnsEmpty() {
+        let result = filterSuggestions("xyz", from: names)
+        #expect(result.isEmpty)
+    }
+
+    @Test func emptyInputReturnsEmpty() {
+        let result = filterSuggestions("", from: names)
+        #expect(result.isEmpty)
+    }
+
+    @Test func singleCharTrigger() {
+        let result = filterSuggestions("m", from: names)
+        #expect(result.contains("Macallan 12"))
+    }
+}
