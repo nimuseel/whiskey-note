@@ -13,6 +13,7 @@ struct NoteSelectionSheet: View {
                     NoteRow(note: note)
                 }
                 .listRowBackground(Color(hex: "#2a1a08"))
+                .listRowSeparatorTint(Color(red: 0.88, green: 0.78, blue: 0.60).opacity(0.15))
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
@@ -43,15 +44,19 @@ struct NoteSelectionSheet: View {
 private struct NoteRow: View {
     let note: WhiskeyNote
 
-    private var formattedDate: String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
-        formatter.locale = Locale(identifier: "ko_KR")
-        return formatter.string(from: note.createdAt)
-    }
-
     private static let warmCream = Color(red: 0.88, green: 0.78, blue: 0.60)
+
+    private static let dateFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.dateStyle = .long
+        f.timeStyle = .none
+        f.locale = Locale(identifier: "ko_KR")
+        return f
+    }()
+
+    private var formattedDate: String {
+        Self.dateFormatter.string(from: note.createdAt)
+    }
 
     var body: some View {
         HStack {
