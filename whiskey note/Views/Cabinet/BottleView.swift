@@ -139,6 +139,15 @@ struct BottleView: View {
     }
     private var displayName: String { note.name.isEmpty ? "Unnamed" : note.name }
 
+    private var accessibilityDescription: String {
+        var parts = [displayName]
+        if let cat = category { parts.append(cat.localizedName) }
+        if let age = note.age { parts.append("\(age)년산") }
+        if note.rating > 0 { parts.append("별점 \(Int(note.rating))점") }
+        if allNotes.count > 1 { parts.append("\(allNotes.count)개의 노트") }
+        return parts.joined(separator: ", ")
+    }
+
     var body: some View {
         Group {
             if allNotes.count == 1 {
@@ -148,6 +157,7 @@ struct BottleView: View {
                 .buttonStyle(.plain)
             } else {
                 Button {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     showSheet = true
                 } label: {
                     bottleGraphic
@@ -160,6 +170,10 @@ struct BottleView: View {
                 }
             }
         }
+        .accessibilityLabel(accessibilityDescription)
+        .accessibilityHint(allNotes.count == 1
+            ? String(localized: "탭하면 노트 상세로 이동합니다")
+            : String(localized: "탭하면 노트 목록이 열립니다"))
     }
 
     private var bottleGraphic: some View {
