@@ -120,7 +120,12 @@ enum BottleDesign {
 // MARK: - BottleView
 
 struct BottleView: View {
-    let note: WhiskeyNote
+    let note: WhiskeyNote          // representative — 외관 결정
+    let allNotes: [WhiskeyNote]    // 전체 노트 (탭 동작 결정)
+
+    @State private var showSheet = false
+    @State private var showDetail = false
+    @State private var selectedNote: WhiskeyNote?
 
     private var category: WhiskeyCategory? {
         WhiskeyCategory(rawValue: note.category)
@@ -129,10 +134,59 @@ struct BottleView: View {
     private var bodyH: CGFloat { BottleDesign.bodyHeight(age: note.age) }
     private var bodyW: CGFloat { BottleDesign.bodyWidth(for: category) }
     private var glowOp: Double { BottleDesign.glowOpacity(rating: note.rating) }
-    private var glowRadius: CGFloat { glowOp >= BottleDesign.GlowOpacity.strong ? BottleDesign.GlowRadius.strong : BottleDesign.GlowRadius.subtle }
+    private var glowRadius: CGFloat {
+        glowOp >= BottleDesign.GlowOpacity.strong
+            ? BottleDesign.GlowRadius.strong
+            : BottleDesign.GlowRadius.subtle
+    }
     private var displayName: String { note.name.isEmpty ? "Unnamed" : note.name }
 
+    private var accessibilityDescription: String {
+        var parts = [displayName]
+        if let cat = category { parts.append(cat.localizedName) }
+        if let age = note.age { parts.append("\(age)년산") }
+        if note.rating > 0 { parts.append("별점 \(Int(note.rating))점") }
+        if allNotes.count > 1 { parts.append("\(allNotes.count)개의 노트") }
+        return parts.joined(separator: ", ")
+    }
+
     var body: some View {
+        Group {
+            if allNotes.count == 1 {
+                NavigationLink(value: allNotes[0]) {
+                    bottleGraphic
+                }
+                .buttonStyle(.plain)
+            } else {
+                Button {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    selectedNote = nil
+                    showSheet = true
+                } label: {
+                    bottleGraphic
+                }
+                .buttonStyle(.plain)
+                .sheet(isPresented: $showSheet, onDismiss: {
+                    if selectedNote != nil { showDetail = true }
+                }) {
+                    NoteSelectionSheet(whiskey: note, notes: allNotes) { selected in
+                        selectedNote = selected
+                    }
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
+                }
+                .navigationDestination(isPresented: $showDetail) {
+                    if let n = selectedNote { NoteDetailView(note: n) }
+                }
+            }
+        }
+        .accessibilityLabel(accessibilityDescription)
+        .accessibilityHint(allNotes.count == 1
+            ? String(localized: "탭하면 노트 상세로 이동합니다")
+            : String(localized: "탭하면 노트 목록이 열립니다"))
+    }
+
+    private var bottleGraphic: some View {
         VStack(spacing: 0) {
             // Cap
             RoundedRectangle(cornerRadius: BottleDesign.Layout.capCornerRadius)

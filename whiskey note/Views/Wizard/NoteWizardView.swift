@@ -15,6 +15,7 @@ struct NoteWizardView: View {
     @State private var name = ""
     @State private var category = WhiskeyCategory.singleMalt.rawValue
     @State private var existingNames: [String] = []
+    @State private var existingNameCategories: [String: String] = [:]
     @State private var abvText = ""
     @State private var ageText = ""
     @State private var priceText = ""
@@ -77,7 +78,8 @@ struct NoteWizardView: View {
             WizardStep1View(name: $name, category: $category,
                             abv: $abvText, age: $ageText, price: $priceText,
                             selectedPhoto: $selectedPhoto, photoData: $photoData,
-                            existingNames: existingNames)
+                            existingNames: existingNames,
+                            existingNameCategories: existingNameCategories)
         case 2:
             WizardStep2View(intensities: $intensities)
         case 3:
@@ -153,10 +155,9 @@ struct NoteWizardView: View {
     // MARK: - Fetch Existing Names
 
     private func fetchExistingNames() {
-        var descriptor = FetchDescriptor<WhiskeyNote>()
-        descriptor.propertiesToFetch = [\.name]
-        let fetched = (try? modelContext.fetch(descriptor))?.map(\.name) ?? []
-        existingNames = Array(Set(fetched)).sorted()
+        let fetched = (try? modelContext.fetch(FetchDescriptor<WhiskeyNote>())) ?? []
+        existingNames = Array(Set(fetched.map(\.name))).sorted()
+        existingNameCategories = buildCategoryDict(fetched)
     }
 
     // MARK: - Load Existing Note

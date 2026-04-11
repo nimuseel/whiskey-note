@@ -10,6 +10,7 @@ struct WizardStep1View: View {
     @Binding var selectedPhoto: PhotosPickerItem?
     @Binding var photoData: Data?
     var existingNames: [String] = []
+    var existingNameCategories: [String: String] = [:]
 
     @FocusState private var nameFieldFocused: Bool
     @State private var textFieldFrame: CGRect = .zero
@@ -17,6 +18,15 @@ struct WizardStep1View: View {
     private var suggestions: [String] {
         guard nameFieldFocused, name.count >= 1 else { return [] }
         return filterSuggestions(name, from: existingNames)
+    }
+
+    private var categoryMismatchWarning: String? {
+        let trimmed = name.trimmingCharacters(in: .whitespaces)
+        guard !trimmed.isEmpty,
+              let storedRawValue = existingNameCategories[trimmed],
+              storedRawValue != category else { return nil }
+        let localizedName = WhiskeyCategory(rawValue: storedRawValue)?.localizedName ?? storedRawValue
+        return String(localized: "기존 노트의 카테고리: \(localizedName)")
     }
 
     var body: some View {
@@ -93,6 +103,17 @@ struct WizardStep1View: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                         }
 
+                        // 카테고리 불일치 경고 (기존 노트와 다를 때만 표시)
+                        if let warning = categoryMismatchWarning {
+                            Label(warning, systemImage: "exclamationmark.triangle.fill")
+                                .font(.caption)
+                                .foregroundStyle(AppColors.accent)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .padding(.horizontal, 4)
+                                .transition(.opacity)
+                                .accessibilityLabel(Text("카테고리 불일치: \(warning)"))
+                        }
+
                         HStack(spacing: 12) {
                             formField(label: "도수 (%)") {
                                 TextField("예: 43.0", text: $abv)
@@ -112,6 +133,7 @@ struct WizardStep1View: View {
                                 .accessibilityIdentifier("priceField")
                         }
                     }
+                    .animation(.easeInOut(duration: 0.2), value: categoryMismatchWarning)
                 }
                 .padding()
             }

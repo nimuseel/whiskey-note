@@ -1,17 +1,14 @@
 import SwiftUI
 
 struct CabinetShelfView: View {
-    let notes: [WhiskeyNote]  // 최대 6개
+    let items: [(representative: WhiskeyNote, notes: [WhiskeyNote])]  // 최대 6개
 
     var body: some View {
         VStack(spacing: 0) {
             // Bottles row — align to bottom so varying heights sit on the shelf
             HStack(alignment: .bottom, spacing: 6) {
-                ForEach(notes) { note in
-                    NavigationLink(value: note) {
-                        BottleView(note: note)
-                    }
-                    .buttonStyle(.plain)
+                ForEach(items, id: \.representative.id) { item in
+                    BottleView(note: item.representative, allNotes: item.notes)
                 }
                 Spacer()
             }
