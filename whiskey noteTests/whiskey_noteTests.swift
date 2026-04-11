@@ -395,3 +395,126 @@ struct WhiskeyNameSuggestionsTests {
         #expect(result.contains("Macallan 12"))
     }
 }
+
+// MARK: - CabinetGrouping Tests
+
+@Suite("CabinetGrouping")
+struct CabinetGroupingTests {
+
+    private func makeNote(
+        name: String = "Test",
+        category: String = WhiskeyCategory.singleMalt.rawValue,
+        createdAt: Date = Date()
+    ) -> WhiskeyNote {
+        let note = WhiskeyNote(name: name, category: category)
+        note.createdAt = createdAt
+        return note
+    }
+
+    @Test func emptyNotesReturnsEmpty() {
+        #expect(groupWhiskeysByName([]).isEmpty)
+    }
+
+    @Test func uniqueNamesProduceSingleItemGroups() {
+        let result = groupWhiskeysByName([
+            makeNote(name: "A", createdAt: Date(timeIntervalSince1970: 1000)),
+            makeNote(name: "B", createdAt: Date(timeIntervalSince1970: 2000))
+        ])
+        #expect(result.count == 2)
+        #expect(result.allSatisfy { $0.notes.count == 1 })
+    }
+
+    @Test func sameNameGroupedTogether() {
+        let result = groupWhiskeysByName([
+            makeNote(name: "Laphroaig", createdAt: Date(timeIntervalSince1970: 1000)),
+            makeNote(name: "Laphroaig", createdAt: Date(timeIntervalSince1970: 2000))
+        ])
+        #expect(result.count == 1)
+        #expect(result[0].notes.count == 2)
+    }
+
+    @Test func representativeIsMostRecent() {
+        let older = makeNote(name: "X", createdAt: Date(timeIntervalSince1970: 1000))
+        let newer = makeNote(name: "X", createdAt: Date(timeIntervalSince1970: 2000))
+        let result = groupWhiskeysByName([older, newer])
+        #expect(result[0].representative.createdAt == Date(timeIntervalSince1970: 2000))
+    }
+
+    @Test func shelfOrderByOldestNoteAscending() {
+        // Group "A": oldest = t=2000, Group "B": oldest = t=1000
+        // Expected: B comes first (t=1000 < t=2000)
+        let result = groupWhiskeysByName([
+            makeNote(name: "A", createdAt: Date(timeIntervalSince1970: 2000)),
+            makeNote(name: "B", createdAt: Date(timeIntervalSince1970: 1000))
+        ])
+        #expect(result[0].representative.name == "B")
+        #expect(result[1].representative.name == "A")
+    }
+
+    @Test func shelfOrderWithMultipleNotesPerGroup() {
+        // Group "A": t=1000, t=3000 → oldest = t=1000
+        // Group "B": t=2000, t=4000 → oldest = t=2000
+        // Expected: A first on shelf
+        let result = groupWhiskeysByName([
+            makeNote(name: "A", createdAt: Date(timeIntervalSince1970: 1000)),
+            makeNote(name: "A", createdAt: Date(timeIntervalSince1970: 3000)),
+            makeNote(name: "B", createdAt: Date(timeIntervalSince1970: 2000)),
+            makeNote(name: "B", createdAt: Date(timeIntervalSince1970: 4000))
+        ])
+        #expect(result[0].representative.name == "A")
+        #expect(result[1].representative.name == "B")
+    }
+}
+
+// MARK: - CategoryDict Tests
+
+@Suite("CategoryDict")
+struct CategoryDictTests {
+
+    private func makeNote(
+        name: String,
+        category: String,
+        createdAt: Date = Date()
+    ) -> WhiskeyNote {
+        let note = WhiskeyNote(name: name, category: category)
+        note.createdAt = createdAt
+        return note
+    }
+
+    @Test func emptyNotesReturnsEmptyDict() {
+        #expect(buildCategoryDict([]).isEmpty)
+    }
+
+    @Test func singleNoteReturnsThatCategory() {
+        let note = makeNote(name: "Laphroaig", category: "Single Malt")
+        let result = buildCategoryDict([note])
+        #expect(result["Laphroaig"] == "Single Malt")
+    }
+
+    @Test func mostRecentCategoryWins() {
+        let older = makeNote(name: "X", category: "Bourbon",
+                             createdAt: Date(timeIntervalSince1970: 1000))
+        let newer = makeNote(name: "X", category: "Single Malt",
+                             createdAt: Date(timeIntervalSince1970: 2000))
+        let result = buildCategoryDict([older, newer])
+        #expect(result["X"] == "Single Malt")
+    }
+
+    @Test func olderCategoryDoesNotOverwriteNewer() {
+        // newer comes first in array — must not be overwritten by older
+        let newer = makeNote(name: "X", category: "Japanese",
+                             createdAt: Date(timeIntervalSince1970: 2000))
+        let older = makeNote(name: "X", category: "Blended",
+                             createdAt: Date(timeIntervalSince1970: 1000))
+        let result = buildCategoryDict([newer, older])
+        #expect(result["X"] == "Japanese")
+    }
+
+    @Test func differentNamesGetSeparateEntries() {
+        let a = makeNote(name: "Laphroaig", category: "Single Malt")
+        let b = makeNote(name: "Maker's Mark", category: "Bourbon")
+        let result = buildCategoryDict([a, b])
+        #expect(result["Laphroaig"] == "Single Malt")
+        #expect(result["Maker's Mark"] == "Bourbon")
+    }
+}
