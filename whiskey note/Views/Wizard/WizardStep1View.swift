@@ -133,6 +133,7 @@ struct WizardStep1View: View {
                                 .accessibilityIdentifier("priceField")
                         }
                     }
+                    .animation(.easeInOut(duration: 0.2), value: categoryMismatchWarning)
                 }
                 .padding()
             }
