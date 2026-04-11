@@ -120,7 +120,10 @@ enum BottleDesign {
 // MARK: - BottleView
 
 struct BottleView: View {
-    let note: WhiskeyNote
+    let note: WhiskeyNote          // representative — 외관 결정
+    let allNotes: [WhiskeyNote]    // 전체 노트 (탭 동작 결정)
+
+    @State private var showSheet = false
 
     private var category: WhiskeyCategory? {
         WhiskeyCategory(rawValue: note.category)
@@ -129,10 +132,35 @@ struct BottleView: View {
     private var bodyH: CGFloat { BottleDesign.bodyHeight(age: note.age) }
     private var bodyW: CGFloat { BottleDesign.bodyWidth(for: category) }
     private var glowOp: Double { BottleDesign.glowOpacity(rating: note.rating) }
-    private var glowRadius: CGFloat { glowOp >= BottleDesign.GlowOpacity.strong ? BottleDesign.GlowRadius.strong : BottleDesign.GlowRadius.subtle }
+    private var glowRadius: CGFloat {
+        glowOp >= BottleDesign.GlowOpacity.strong
+            ? BottleDesign.GlowRadius.strong
+            : BottleDesign.GlowRadius.subtle
+    }
     private var displayName: String { note.name.isEmpty ? "Unnamed" : note.name }
 
     var body: some View {
+        Group {
+            if allNotes.count == 1 {
+                NavigationLink(value: allNotes[0]) {
+                    bottleGraphic
+                }
+                .buttonStyle(.plain)
+            } else {
+                Button {
+                    showSheet = true
+                } label: {
+                    bottleGraphic
+                }
+                .buttonStyle(.plain)
+                .sheet(isPresented: $showSheet) {
+                    NoteSelectionSheet(whiskey: note, notes: allNotes)
+                }
+            }
+        }
+    }
+
+    private var bottleGraphic: some View {
         VStack(spacing: 0) {
             // Cap
             RoundedRectangle(cornerRadius: BottleDesign.Layout.capCornerRadius)

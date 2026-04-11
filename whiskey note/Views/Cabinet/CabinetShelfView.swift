@@ -8,7 +8,7 @@ struct CabinetShelfView: View {
             // Bottles row — align to bottom so varying heights sit on the shelf
             HStack(alignment: .bottom, spacing: 6) {
                 ForEach(items, id: \.representative.id) { item in
-                    BottleView(note: item.representative)
+                    BottleView(note: item.representative, allNotes: item.notes)
                 }
                 Spacer()
             }
