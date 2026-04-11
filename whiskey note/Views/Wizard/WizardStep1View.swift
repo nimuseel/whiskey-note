@@ -65,22 +65,22 @@ struct WizardStep1View: View {
                             TextField("예: Laphroaig 10yr", text: $name)
                                 .accessibilityIdentifier("nameField")
                                 .focused($nameFieldFocused)
+                                .background(
+                                    GeometryReader { geo in
+                                        Color.clear
+                                            .onAppear {
+                                                DispatchQueue.main.async {
+                                                    textFieldFrame = geo.frame(in: .named("wizardStep1"))
+                                                }
+                                            }
+                                            .onChange(of: geo.frame(in: .named("wizardStep1"))) { _, newFrame in
+                                                DispatchQueue.main.async {
+                                                    textFieldFrame = newFrame
+                                                }
+                                            }
+                                    }
+                                )
                         }
-                        .background(
-                            GeometryReader { geo in
-                                Color.clear
-                                    .onAppear {
-                                        DispatchQueue.main.async {
-                                            textFieldFrame = geo.frame(in: .named("wizardStep1"))
-                                        }
-                                    }
-                                    .onChange(of: geo.size) { _, _ in
-                                        DispatchQueue.main.async {
-                                            textFieldFrame = geo.frame(in: .named("wizardStep1"))
-                                        }
-                                    }
-                            }
-                        )
 
                         formField(label: "종류") {
                             Picker("종류", selection: $category) {
@@ -116,9 +116,10 @@ struct WizardStep1View: View {
                 .padding()
             }
             .coordinateSpace(name: "wizardStep1")
+            .scrollDismissesKeyboard(.interactively)
 
             // 자동완성 드롭다운
-            if !suggestions.isEmpty {
+            if !suggestions.isEmpty && textFieldFrame != .zero {
                 suggestionsDropdown
                     .offset(x: textFieldFrame.minX,
                             y: textFieldFrame.maxY + 4)
@@ -131,7 +132,7 @@ struct WizardStep1View: View {
     private var suggestionsDropdown: some View {
         ScrollView {
             VStack(spacing: 0) {
-                ForEach(Array(suggestions.enumerated()), id: \.offset) { index, suggestion in
+                ForEach(suggestions, id: \.self) { suggestion in
                     Button {
                         name = suggestion
                         nameFieldFocused = false
@@ -142,7 +143,7 @@ struct WizardStep1View: View {
                             .padding(.horizontal, 12)
                             .frame(minHeight: 44)
                     }
-                    if index < suggestions.count - 1 {
+                    if suggestion != suggestions.last {
                         Divider()
                             .padding(.horizontal, 12)
                     }
@@ -151,7 +152,7 @@ struct WizardStep1View: View {
         }
         .frame(width: textFieldFrame.width)
         .frame(maxHeight: 220)
-        .background(Color.white)
+        .background(Color(UIColor.systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay(
             RoundedRectangle(cornerRadius: 8)
