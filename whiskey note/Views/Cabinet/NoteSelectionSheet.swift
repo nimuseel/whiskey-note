@@ -1,15 +1,22 @@
 import SwiftUI
 
 /// 같은 이름의 위스키에 노트가 여러 개 있을 때 표시되는 선택 시트.
-/// 자체 NavigationStack을 포함해 sheet 안에서 NoteDetailView로 이동한다.
+/// 노트를 탭하면 onSelect 콜백을 호출하고 시트를 닫는다.
+/// 실제 화면 이동은 CabinetView의 NavigationStack에서 처리한다.
 struct NoteSelectionSheet: View {
-    let whiskey: WhiskeyNote      // representative — 이름 표시용
-    let notes: [WhiskeyNote]      // newest-first 정렬된 전체 노트
+    let whiskey: WhiskeyNote
+    let notes: [WhiskeyNote]
+    let onSelect: (WhiskeyNote) -> Void
+
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
             List(notes) { note in
-                NavigationLink(value: note) {
+                Button {
+                    onSelect(note)
+                    dismiss()
+                } label: {
                     NoteRow(note: note)
                 }
                 .listRowBackground(Color(hex: "#2a1a08"))
@@ -32,9 +39,6 @@ struct NoteSelectionSheet: View {
                 }
             }
             .toolbarColorScheme(.dark, for: .navigationBar)
-            .navigationDestination(for: WhiskeyNote.self) { note in
-                NoteDetailView(note: note)
-            }
         }
     }
 }

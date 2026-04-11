@@ -124,6 +124,8 @@ struct BottleView: View {
     let allNotes: [WhiskeyNote]    // 전체 노트 (탭 동작 결정)
 
     @State private var showSheet = false
+    @State private var showDetail = false
+    @State private var selectedNote: WhiskeyNote?
 
     private var category: WhiskeyCategory? {
         WhiskeyCategory(rawValue: note.category)
@@ -158,15 +160,23 @@ struct BottleView: View {
             } else {
                 Button {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    selectedNote = nil
                     showSheet = true
                 } label: {
                     bottleGraphic
                 }
                 .buttonStyle(.plain)
-                .sheet(isPresented: $showSheet) {
-                    NoteSelectionSheet(whiskey: note, notes: allNotes)
-                        .presentationDetents([.medium])
-                        .presentationDragIndicator(.visible)
+                .sheet(isPresented: $showSheet, onDismiss: {
+                    if selectedNote != nil { showDetail = true }
+                }) {
+                    NoteSelectionSheet(whiskey: note, notes: allNotes) { selected in
+                        selectedNote = selected
+                    }
+                    .presentationDetents([.medium])
+                    .presentationDragIndicator(.visible)
+                }
+                .navigationDestination(isPresented: $showDetail) {
+                    if let n = selectedNote { NoteDetailView(note: n) }
                 }
             }
         }
