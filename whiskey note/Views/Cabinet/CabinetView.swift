@@ -4,9 +4,13 @@ import SwiftData
 struct CabinetView: View {
     @Query(sort: \WhiskeyNote.createdAt) private var notes: [WhiskeyNote]
 
-    private var shelves: [[WhiskeyNote]] {
-        stride(from: 0, to: notes.count, by: 6).map {
-            Array(notes[$0..<min($0 + 6, notes.count)])
+    private var groupedWhiskeys: [(representative: WhiskeyNote, notes: [WhiskeyNote])] {
+        groupWhiskeysByName(notes)
+    }
+
+    private var shelves: [[(representative: WhiskeyNote, notes: [WhiskeyNote])]] {
+        stride(from: 0, to: groupedWhiskeys.count, by: 6).map {
+            Array(groupedWhiskeys[$0..<min($0 + 6, groupedWhiskeys.count)])
         }
     }
 
@@ -42,7 +46,7 @@ struct CabinetView: View {
                     ScrollView {
                         VStack(spacing: 12) {
                             ForEach(Array(shelves.enumerated()), id: \.offset) { _, shelf in
-                                CabinetShelfView(notes: shelf)
+                                CabinetShelfView(items: shelf)
                             }
                         }
                         .padding(.top, 20)
