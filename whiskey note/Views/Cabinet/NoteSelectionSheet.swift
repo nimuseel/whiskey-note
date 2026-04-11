@@ -12,10 +12,25 @@ struct NoteSelectionSheet: View {
                 NavigationLink(value: note) {
                     NoteRow(note: note)
                 }
+                .listRowBackground(Color(hex: "#2a1a08"))
             }
             .listStyle(.plain)
-            .navigationTitle(whiskey.name)
+            .scrollContentBackground(.hidden)
+            .background(Color(hex: "#1a1005"))
             .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    VStack(spacing: 2) {
+                        Text(whiskey.name)
+                            .font(.headline)
+                            .foregroundStyle(Color.white)
+                        Text(String(localized: "\(notes.count)개의 노트 · 선택하세요"))
+                            .font(.caption2)
+                            .foregroundStyle(Color(red: 0.88, green: 0.78, blue: 0.60))
+                    }
+                }
+            }
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .navigationDestination(for: WhiskeyNote.self) { note in
                 NoteDetailView(note: note)
             }
@@ -36,12 +51,14 @@ private struct NoteRow: View {
         return formatter.string(from: note.createdAt)
     }
 
+    private static let warmCream = Color(red: 0.88, green: 0.78, blue: 0.60)
+
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 6) {
                 Text(formattedDate)
                     .font(.subheadline)
-                    .foregroundStyle(AppColors.textPrimary)
+                    .foregroundStyle(Self.warmCream)
                 if note.rating > 0 {
                     StarRatingView(
                         rating: .constant(note.rating),
@@ -52,6 +69,7 @@ private struct NoteRow: View {
             }
             Spacer()
         }
-        .padding(.vertical, 6)
+        .padding(.vertical, 8)
+        .frame(minHeight: 44)
     }
 }

@@ -155,6 +155,7 @@ struct BottleView: View {
                 .buttonStyle(.plain)
                 .sheet(isPresented: $showSheet) {
                     NoteSelectionSheet(whiskey: note, notes: allNotes)
+                        .presentationDetents([.medium])
                 }
             }
         }

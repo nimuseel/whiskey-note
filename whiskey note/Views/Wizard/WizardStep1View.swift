@@ -26,7 +26,7 @@ struct WizardStep1View: View {
               let storedRawValue = existingNameCategories[trimmed],
               storedRawValue != category else { return nil }
         let localizedName = WhiskeyCategory(rawValue: storedRawValue)?.localizedName ?? storedRawValue
-        return String(localized: "⚠ 기존 노트의 카테고리: \(localizedName)")
+        return String(localized: "기존 노트의 카테고리: \(localizedName)")
     }
 
     var body: some View {
@@ -105,12 +105,13 @@ struct WizardStep1View: View {
 
                         // 카테고리 불일치 경고 (기존 노트와 다를 때만 표시)
                         if let warning = categoryMismatchWarning {
-                            Text(warning)
+                            Label(warning, systemImage: "exclamationmark.triangle.fill")
                                 .font(.caption)
                                 .foregroundStyle(AppColors.accent)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 4)
                                 .transition(.opacity)
+                                .accessibilityLabel(Text("카테고리 불일치: \(warning)"))
                         }
 
                         HStack(spacing: 12) {
