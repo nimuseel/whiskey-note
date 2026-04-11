@@ -4,6 +4,7 @@ import Foundation
 
 /// 이름 기준으로 노트를 그룹핑한다.
 /// - representative: 그룹 내 가장 최신 노트 (병 외관 결정)
+/// - notes: 그룹 내 노트 목록, createdAt 내림차순 정렬 (최신이 [0])
 /// - 선반 정렬: 그룹 내 가장 오래된 노트의 createdAt 오름차순 (원래 스펙 유지)
 func groupWhiskeysByName(
     _ notes: [WhiskeyNote]
@@ -15,9 +16,8 @@ func groupWhiskeysByName(
             return (representative: sorted[0], notes: sorted)
         }
         .sorted {
-            let date0 = $0.notes.map(\.createdAt).min() ?? .distantPast
-            let date1 = $1.notes.map(\.createdAt).min() ?? .distantPast
-            return date0 < date1
+            // notes는 이미 내림차순 정렬 → last가 가장 오래된 노트
+            ($0.notes.last?.createdAt ?? .distantPast) < ($1.notes.last?.createdAt ?? .distantPast)
         }
 }
 
