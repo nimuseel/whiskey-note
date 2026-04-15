@@ -14,6 +14,8 @@ struct NoteWizardView: View {
     // Step 1
     @State private var name = ""
     @State private var category = WhiskeyCategory.singleMalt.rawValue
+    @State private var existingNames: [String] = []
+    @State private var existingNameCategories: [String: String] = [:]
     @State private var abvText = ""
     @State private var ageText = ""
     @State private var priceText = ""
@@ -46,7 +48,10 @@ struct NoteWizardView: View {
                 Button("나가기", role: .destructive) { dismiss() }
                 Button("계속 작성", role: .cancel) {}
             }
-            .onAppear { loadExistingNote() }
+            .onAppear {
+                loadExistingNote()
+                fetchExistingNames()
+            }
         }
     }
 
@@ -72,7 +77,9 @@ struct NoteWizardView: View {
         case 1:
             WizardStep1View(name: $name, category: $category,
                             abv: $abvText, age: $ageText, price: $priceText,
-                            selectedPhoto: $selectedPhoto, photoData: $photoData)
+                            selectedPhoto: $selectedPhoto, photoData: $photoData,
+                            existingNames: existingNames,
+                            existingNameCategories: existingNameCategories)
         case 2:
             WizardStep2View(intensities: $intensities)
         case 3:
@@ -143,6 +150,14 @@ struct NoteWizardView: View {
                 || intensities.values.contains { $0 > 0 }
                 || !memo.isEmpty || !dish.isEmpty
         }
+    }
+
+    // MARK: - Fetch Existing Names
+
+    private func fetchExistingNames() {
+        let fetched = (try? modelContext.fetch(FetchDescriptor<WhiskeyNote>())) ?? []
+        existingNames = Array(Set(fetched.map(\.name))).sorted()
+        existingNameCategories = buildCategoryDict(fetched)
     }
 
     // MARK: - Load Existing Note

@@ -9,6 +9,9 @@ struct ContentView: View {
             NoteListView()
                 .tabItem { Label("노트", systemImage: "note.text") }
 
+            CabinetView()
+                .tabItem { Label(String(localized: "술장"), systemImage: "wineglass") }
+
             StatsView()
                 .tabItem { Label("통계", systemImage: "chart.bar.fill") }
 

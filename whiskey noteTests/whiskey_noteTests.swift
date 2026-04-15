@@ -298,3 +298,223 @@ struct ShareCardHelperTests {
         return note
     }
 }
+
+// MARK: - BottleDesign Tests
+
+@Suite("BottleDesign")
+struct BottleDesignTests {
+
+    // bodyHeight — boundary tests for each age tier
+    @Test func bodyHeightNilAge() {
+        #expect(BottleDesign.bodyHeight(age: nil) == BottleDesign.Layout.heightNAS)
+    }
+    @Test func bodyHeightAge10() {
+        #expect(BottleDesign.bodyHeight(age: 10) == BottleDesign.Layout.heightYoung)
+    }
+    @Test func bodyHeightAge12() {
+        // upper boundary of young tier
+        #expect(BottleDesign.bodyHeight(age: 12) == BottleDesign.Layout.heightYoung)
+    }
+    @Test func bodyHeightAge13() {
+        // lower boundary of mature tier
+        #expect(BottleDesign.bodyHeight(age: 13) == BottleDesign.Layout.heightMature)
+    }
+    @Test func bodyHeightAge18() {
+        // upper boundary of mature tier
+        #expect(BottleDesign.bodyHeight(age: 18) == BottleDesign.Layout.heightMature)
+    }
+    @Test func bodyHeightAge19() {
+        // lower boundary of old tier
+        #expect(BottleDesign.bodyHeight(age: 19) == BottleDesign.Layout.heightOld)
+    }
+    @Test func bodyHeightAge30() {
+        #expect(BottleDesign.bodyHeight(age: 30) == BottleDesign.Layout.heightOld)
+    }
+
+    // bodyWidth — one test per distinct width value
+    @Test func bodyWidthBourbon() {
+        #expect(BottleDesign.bodyWidth(for: .bourbon) == BottleDesign.Layout.widthWide)
+    }
+    @Test func bodyWidthSingleMalt() {
+        #expect(BottleDesign.bodyWidth(for: .singleMalt) == BottleDesign.Layout.widthStandard)
+    }
+    @Test func bodyWidthJapanese() {
+        #expect(BottleDesign.bodyWidth(for: .japanese) == BottleDesign.Layout.widthSlim)
+    }
+    @Test func bodyWidthOther() {
+        #expect(BottleDesign.bodyWidth(for: .other) == BottleDesign.Layout.widthNarrow)
+    }
+
+    // glowOpacity — boundary tests for each tier
+    @Test func glowOpacityNoRating() {
+        #expect(BottleDesign.glowOpacity(rating: 0) == BottleDesign.GlowOpacity.none)
+    }
+    @Test func glowOpacityBelow4() {
+        #expect(BottleDesign.glowOpacity(rating: 3.5) == BottleDesign.GlowOpacity.none)
+    }
+    @Test func glowOpacityAt4() {
+        // lower boundary of subtle tier
+        #expect(BottleDesign.glowOpacity(rating: 4.0) == BottleDesign.GlowOpacity.subtle)
+    }
+    @Test func glowOpacityAt4_4() {
+        // upper boundary of subtle tier
+        #expect(BottleDesign.glowOpacity(rating: 4.4) == BottleDesign.GlowOpacity.subtle)
+    }
+    @Test func glowOpacityAt4_5() {
+        // lower boundary of strong tier
+        #expect(BottleDesign.glowOpacity(rating: 4.5) == BottleDesign.GlowOpacity.strong)
+    }
+    @Test func glowOpacityAt5() {
+        #expect(BottleDesign.glowOpacity(rating: 5.0) == BottleDesign.GlowOpacity.strong)
+    }
+}
+
+// MARK: - WhiskeyNameSuggestions Tests
+
+@Suite("WhiskeyNameSuggestions")
+struct WhiskeyNameSuggestionsTests {
+    let names = ["Laphroaig 10yr", "Macallan 12", "Balvenie 14"]
+
+    @Test func caseInsensitiveMatch() {
+        let result = filterSuggestions("lap", from: names)
+        #expect(result == ["Laphroaig 10yr"])
+    }
+
+    @Test func noMatchReturnsEmpty() {
+        let result = filterSuggestions("xyz", from: names)
+        #expect(result.isEmpty)
+    }
+
+    @Test func emptyInputReturnsEmpty() {
+        let result = filterSuggestions("", from: names)
+        #expect(result.isEmpty)
+    }
+
+    @Test func singleCharTrigger() {
+        let result = filterSuggestions("m", from: names)
+        #expect(result.contains("Macallan 12"))
+    }
+}
+
+// MARK: - CabinetGrouping Tests
+
+@Suite("CabinetGrouping")
+struct CabinetGroupingTests {
+
+    private func makeNote(
+        name: String = "Test",
+        category: String = WhiskeyCategory.singleMalt.rawValue,
+        createdAt: Date = Date()
+    ) -> WhiskeyNote {
+        let note = WhiskeyNote(name: name, category: category)
+        note.createdAt = createdAt
+        return note
+    }
+
+    @Test func emptyNotesReturnsEmpty() {
+        #expect(groupWhiskeysByName([]).isEmpty)
+    }
+
+    @Test func uniqueNamesProduceSingleItemGroups() {
+        let result = groupWhiskeysByName([
+            makeNote(name: "A", createdAt: Date(timeIntervalSince1970: 1000)),
+            makeNote(name: "B", createdAt: Date(timeIntervalSince1970: 2000))
+        ])
+        #expect(result.count == 2)
+        #expect(result.allSatisfy { $0.notes.count == 1 })
+    }
+
+    @Test func sameNameGroupedTogether() {
+        let result = groupWhiskeysByName([
+            makeNote(name: "Laphroaig", createdAt: Date(timeIntervalSince1970: 1000)),
+            makeNote(name: "Laphroaig", createdAt: Date(timeIntervalSince1970: 2000))
+        ])
+        #expect(result.count == 1)
+        #expect(result[0].notes.count == 2)
+    }
+
+    @Test func representativeIsMostRecent() {
+        let older = makeNote(name: "X", createdAt: Date(timeIntervalSince1970: 1000))
+        let newer = makeNote(name: "X", createdAt: Date(timeIntervalSince1970: 2000))
+        let result = groupWhiskeysByName([older, newer])
+        #expect(result[0].representative.createdAt == Date(timeIntervalSince1970: 2000))
+    }
+
+    @Test func shelfOrderByOldestNoteAscending() {
+        // Group "A": oldest = t=2000, Group "B": oldest = t=1000
+        // Expected: B comes first (t=1000 < t=2000)
+        let result = groupWhiskeysByName([
+            makeNote(name: "A", createdAt: Date(timeIntervalSince1970: 2000)),
+            makeNote(name: "B", createdAt: Date(timeIntervalSince1970: 1000))
+        ])
+        #expect(result[0].representative.name == "B")
+        #expect(result[1].representative.name == "A")
+    }
+
+    @Test func shelfOrderWithMultipleNotesPerGroup() {
+        // Group "A": t=1000, t=3000 → oldest = t=1000
+        // Group "B": t=2000, t=4000 → oldest = t=2000
+        // Expected: A first on shelf
+        let result = groupWhiskeysByName([
+            makeNote(name: "A", createdAt: Date(timeIntervalSince1970: 1000)),
+            makeNote(name: "A", createdAt: Date(timeIntervalSince1970: 3000)),
+            makeNote(name: "B", createdAt: Date(timeIntervalSince1970: 2000)),
+            makeNote(name: "B", createdAt: Date(timeIntervalSince1970: 4000))
+        ])
+        #expect(result[0].representative.name == "A")
+        #expect(result[1].representative.name == "B")
+    }
+}
+
+// MARK: - CategoryDict Tests
+
+@Suite("CategoryDict")
+struct CategoryDictTests {
+
+    private func makeNote(
+        name: String,
+        category: String,
+        createdAt: Date = Date()
+    ) -> WhiskeyNote {
+        let note = WhiskeyNote(name: name, category: category)
+        note.createdAt = createdAt
+        return note
+    }
+
+    @Test func emptyNotesReturnsEmptyDict() {
+        #expect(buildCategoryDict([]).isEmpty)
+    }
+
+    @Test func singleNoteReturnsThatCategory() {
+        let note = makeNote(name: "Laphroaig", category: "Single Malt")
+        let result = buildCategoryDict([note])
+        #expect(result["Laphroaig"] == "Single Malt")
+    }
+
+    @Test func mostRecentCategoryWins() {
+        let older = makeNote(name: "X", category: "Bourbon",
+                             createdAt: Date(timeIntervalSince1970: 1000))
+        let newer = makeNote(name: "X", category: "Single Malt",
+                             createdAt: Date(timeIntervalSince1970: 2000))
+        let result = buildCategoryDict([older, newer])
+        #expect(result["X"] == "Single Malt")
+    }
+
+    @Test func olderCategoryDoesNotOverwriteNewer() {
+        // newer comes first in array — must not be overwritten by older
+        let newer = makeNote(name: "X", category: "Japanese",
+                             createdAt: Date(timeIntervalSince1970: 2000))
+        let older = makeNote(name: "X", category: "Blended",
+                             createdAt: Date(timeIntervalSince1970: 1000))
+        let result = buildCategoryDict([newer, older])
+        #expect(result["X"] == "Japanese")
+    }
+
+    @Test func differentNamesGetSeparateEntries() {
+        let a = makeNote(name: "Laphroaig", category: "Single Malt")
+        let b = makeNote(name: "Maker's Mark", category: "Bourbon")
+        let result = buildCategoryDict([a, b])
+        #expect(result["Laphroaig"] == "Single Malt")
+        #expect(result["Maker's Mark"] == "Bourbon")
+    }
+}
